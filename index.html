@@ -101,7 +101,7 @@ select.input{appearance:none;-webkit-appearance:none;background-image:linear-gra
 .hero h1{margin:0;font-size:32px;line-height:1.25;letter-spacing:-.01em}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;justify-content:center}
 .tag{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--soft2);color:var(--theme-text);font-weight:700}
-.quote{margin:16px 0;padding:12px 16px;background:var(--soft);border-left:4px solid var(--theme);border-radius:0 14px 14px 0;text-align:left;font-weight:500}
+.quote{margin:8px 0 4px;font-size:14px;color:var(--theme-text);font-weight:500;line-height:1.6}
 .profile{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;margin:14px 0 0;font-size:14px;background:var(--surface);padding:14px 18px;border-radius:16px;border:1px solid var(--line);text-align:left}
 .profile dt{color:var(--theme-text);font-weight:700}
 .profile dd{margin:0}
@@ -141,10 +141,6 @@ select.input{appearance:none;-webkit-appearance:none;background-image:linear-gra
 .ward-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;align-items:start}
 .ward img{width:100%;height:auto;display:block;border-radius:14px}
 .ward p{font-size:13px;margin:6px 2px 0;color:var(--muted);line-height:1.45}
-.pager{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
-.pager a{flex:1;max-width:48%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-size:14px}
-.pager a small{display:block;color:var(--muted);font-size:12px}
-.pager a.next{text-align:right;margin-left:auto}
 .danger-row{display:flex;justify-content:center;gap:8px;margin-top:26px}
 
 /* edit */
@@ -185,7 +181,6 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 @keyframes up{from{transform:translateY(30px);opacity:.5}}
 
 /* cropper */
-.ratio-row{display:flex;flex-wrap:wrap;gap:6px}
 .crop-stage{position:relative;overflow:hidden;margin:14px auto 10px;border-radius:12px;background:#111;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .crop-stage:active{cursor:grabbing}
 .crop-stage img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;pointer-events:none;user-select:none;-webkit-user-drag:none}
@@ -262,6 +257,48 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 .era-rel-row{display:grid;grid-template-columns:minmax(64px,28%) 1fr;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--theme-text)}
 .check.sm{font-size:13px;margin:2px 0}
 .check.sm input{width:16px;height:16px}
+/* 3:4 고정 사진 (PNG 저장에서도 같은 모양이 나오도록 배경 이미지로 그림) */
+.pic34{width:100%;height:0;padding-top:133.333%;background:var(--soft) center 20%/cover no-repeat;border-radius:16px}
+.hero-img .pic34{border-radius:22px}
+.motif .pic34{border-radius:0}
+.ward .pic34{border-radius:14px}
+.cmp tr.img td .pic34{max-width:200px;border-radius:12px}
+.png-box .cmp tr.img td .pic34{max-width:none}
+.sec h2 small{font-size:12px;font-weight:700;color:var(--muted)}
+/* 행적 타임라인 */
+.tl{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px 4px}
+.tl-row{position:relative;margin-left:7px;padding:0 0 10px 20px;border-left:2px solid var(--soft2);line-height:1.55}
+.tl-row.last{border-left-color:transparent}
+.tl-row.head{padding-bottom:8px}
+.tl-node{position:absolute;left:-6px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--surface);border:2px solid var(--theme)}
+.tl-node.big{left:-8px;top:4px;width:14px;height:14px;border:0;background:var(--theme)}
+.tl-chip{display:inline-block;font-size:12px;font-weight:800;padding:1px 10px;border-radius:999px;background:var(--theme);color:var(--on-theme);line-height:1.6}
+.tl-chip.plain{background:var(--soft2);color:var(--theme-text)}
+.dots .dot-item{display:flex;gap:8px;margin:2px 0}
+.dots .dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--theme);margin-top:9px}
+/* 시기 패널 */
+.era-panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px}
+.era-panel .story{padding:12px 14px;background:var(--bg)}
+.era-head{display:flex;gap:14px;align-items:flex-start}
+.era-pic{width:120px;flex:none}
+.era-info{flex:1;min-width:0}
+.era-info .sub{margin:6px 0 0}
+.era-info .profile{margin-top:8px;padding:10px 12px;background:var(--bg)}
+.era-panel .rel{background:var(--bg)}
+/* 행적 편집 */
+.deed-edit{display:grid;grid-template-columns:1fr auto;grid-template-areas:"txt tools";gap:6px;margin-bottom:8px;align-items:center}
+.deed-edit.with-era{grid-template-columns:minmax(90px,40%) 1fr;grid-template-areas:"sel tools" "txt txt";padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.deed-sel{grid-area:sel;padding:7px 30px 7px 10px;font-size:14px}
+.deed-txt{grid-area:txt}
+.deed-edit .deed-tools{grid-area:tools;justify-self:end}
+/* 순서 바꾸기 */
+.ro-list{display:grid;gap:6px}
+.ro-row{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.ro-thumb{width:40px;height:40px;border-radius:10px;flex:none;background:var(--soft) center 20%/cover no-repeat;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--theme-text)}
+.ro-name{flex:1;min-width:0;line-height:1.3}
+.ro-name b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ro-name small{color:var(--muted);font-size:12px}
+.ro-row .mini{padding:6px 10px;font-size:14px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1d1b26;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;transition:.2s;z-index:300;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -310,7 +347,21 @@ function applyVars(el, color){ const v = themeVars(color, state.settings.dark); 
 function toast(msg, ms = 2000){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), ms); }
 function download(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
 function setPath(obj, path, val){ const k = path.split('.'); let o = obj; for (let i = 0; i < k.length - 1; i++) o = o[k[i]]; o[k[k.length-1]] = val; }
-function pickFile(accept){ return new Promise(res => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; i.onchange = () => res(i.files[0] || null); i.click(); }); }
+function pickFile(accept){
+  // 모바일(특히 iOS)에서 화면에 붙어 있지 않은 input은 선택 후 이벤트가 사라질 수 있어서 문서에 붙여두고 씀
+  return new Promise(res => {
+    const old = document.getElementById('filePick'); if (old) old.remove();
+    const i = document.createElement('input');
+    i.type = 'file'; i.accept = accept; i.id = 'filePick';
+    i.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0';
+    document.body.append(i);
+    let settled = false;
+    const done = f => { if (settled) return; settled = true; setTimeout(() => i.remove(), 1000); res(f); };
+    i.addEventListener('change', () => done((i.files && i.files[0]) || null));
+    i.addEventListener('cancel', () => done(null));
+    i.click();
+  });
+}
 
 /* ---------- storage (IndexedDB, localStorage fallback) ---------- */
 const DB = {
@@ -339,18 +390,24 @@ function blankChar(){
 function normalizeChar(c){
   const b = blankChar(); c = (c && typeof c === 'object') ? c : {};
   const str = v => typeof v === 'string' ? v : (v == null ? '' : String(v));
-  const arr = (v, f) => Array.isArray(v) ? v.filter(x => x && typeof x === 'object').map(f) : [];
+  const isObj = x => x && typeof x === 'object';
+  const arr = (v, f) => Array.isArray(v) ? v.filter(isObj).map(f) : [];
   const sid = v => (typeof v === 'string' && /^[\w-]{1,40}$/.test(v)) ? v : uid();
-  const deeds = v => arr(v, d => ({ id: sid(d.id), text: str(d.text) }));
   const prof = v => arr(v, p => ({ k: str(p.k), v: str(p.v) }));
-  const byEra = v => (v && typeof v === 'object' && !Array.isArray(v)) ? Object.fromEntries(Object.entries(v).filter(([k]) => /^[\w-]{1,40}$/.test(k)).map(([k, x]) => [k, str(x)])) : {};
+  const byEra = v => isObj(v) && !Array.isArray(v) ? Object.fromEntries(Object.entries(v).filter(([k]) => /^[\w-]{1,40}$/.test(k)).map(([k, x]) => [k, str(x)])) : {};
+  const erasRaw = Array.isArray(c.eras) ? c.eras.filter(isObj) : [];
+  const eras = erasRaw.map(e => ({ id: sid(e.id), label: str(e.label), image: safeImg(e.image), subtitle: str(e.subtitle), story: str(e.story), profile: prof(e.profile) }));
+  const ids = new Set(eras.map(e => e.id));
+  // 행적은 캐릭터 하나에 한 줄로 모아두고, 각 행적에 시기를 표시 (예전 버전의 시기별 행적은 여기로 옮김)
+  const deedsOf = (v, eraId) => arr(v, d => ({ id: sid(d.id), text: str(d.text), eraId: str(d.eraId ?? eraId) }));
+  let deeds = deedsOf(c.deeds, '');
+  erasRaw.forEach((e, i) => { if (Array.isArray(e.deeds)) deeds = deeds.concat(deedsOf(e.deeds, eras[i].id)); });
+  deeds.forEach(d => { if (!ids.has(d.eraId)) d.eraId = ''; });
   return {
     id: str(c.id) || b.id, kind: c.kind === 'canon' ? 'canon' : 'oc', origin: str(c.origin).trim(), name: str(c.name), subtitle: str(c.subtitle), image: safeImg(c.image),
     color: isHex(c.color) ? c.color : '', tags: Array.isArray(c.tags) ? c.tags.map(str).filter(Boolean) : [],
     profile: Array.isArray(c.profile) ? prof(c.profile) : b.profile,
-    quote: str(c.quote), story: str(c.story), deeds: deeds(c.deeds),
-    eras: arr(c.eras, e => ({ id: sid(e.id), label: str(e.label), image: safeImg(e.image), subtitle: str(e.subtitle), story: str(e.story), deeds: deeds(e.deeds), profile: prof(e.profile) })),
-    mainEra: str(c.mainEra),
+    quote: str(c.quote), story: str(c.story), deeds, eras, mainEra: ids.has(c.mainEra) ? c.mainEra : '',
     relations: arr(c.relations, r => ({ id: str(r.id) || uid(), targetId: str(r.targetId), name: str(r.name), image: safeImg(r.image), relation: str(r.relation), byEra: byEra(r.byEra) })),
     motifs: arr(c.motifs, m => ({ id: str(m.id) || uid(), name: str(m.name), image: safeImg(m.image), reason: str(m.reason) })),
     songs: arr(c.songs, s => ({ id: str(s.id) || uid(), title: str(s.title), artist: str(s.artist), url: str(s.url), note: str(s.note) })),
@@ -387,6 +444,7 @@ const colorOf = c => (c && isHex(c.color)) ? c.color : state.settings.theme;
 function sortedChars(){
   const a = [...state.characters], s = state.settings.sort;
   if (s === 'name') a.sort((x, y) => x.name.localeCompare(y.name, 'ko'));
+  else if (s === 'created') a.sort((x, y) => x.created - y.created);
   else if (s === 'updated') a.sort((x, y) => y.updated - x.updated);
   return a;
 }
@@ -431,7 +489,8 @@ function renderList(){
     ${state.characters.length ? `<div class="list-head"><h1>캐릭터 목록 <span class="muted" style="font-size:14px;font-weight:600">${state.characters.length}명</span></h1><div class="list-btns"><button class="btn sm" data-act="list-html">HTML 추출</button><button class="btn sm" data-act="group-png">단체 PNG</button></div></div>
     <div class="search-row">
       <input class="input" type="search" id="q" placeholder="이름 · 원작 · 소개 · 태그 검색" value="${esc(ui.q)}">
-      <select class="input sort" id="sort"><option value="manual">등록순</option><option value="name">이름순</option><option value="updated">최근 수정순</option></select>
+      <select class="input sort" id="sort"><option value="manual">사용자 설정순</option><option value="created">등록순</option><option value="name">이름순</option><option value="updated">최근 수정순</option></select>
+      <button class="icon-btn" data-act="reorder" aria-label="순서 바꾸기" title="순서 바꾸기">↕</button>
     </div>
     <div class="filters" id="filters"></div>` : ''}
     <div id="grid"></div>`;
@@ -499,27 +558,44 @@ function mergedProfile(c, era){
 }
 const relText = (r, era) => ((era && r.byEra[era.id]) || '').trim() || r.relation.trim();
 const hasEraRel = r => Object.values(r.byEra).some(v => String(v).trim());
-// era가 있으면 그 시기에 보이는 관계, 없으면 공통 관계
+// era가 있으면 그 시기에 따로 적은 관계, 없으면 공통 관계
 function relList(c, era){
   return c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim() || hasEraRel(r))
-    .map(r => ({ r, text: era ? relText(r, era) : r.relation.trim() }))
+    .map(r => ({ r, text: era ? (r.byEra[era.id] || '').trim() : r.relation.trim() }))
     .filter(({ r, text }) => era ? !!text : (!!text || !hasEraRel(r)));
 }
 const liveDeeds = a => a.filter(d => d.text.trim());
+const eraDeeds = (c, e) => liveDeeds(c.deeds).filter(d => d.eraId === e.id);
+const pic = (src, cls = '') => `<div class="pic34 ${cls}" style="${bgImg(src)}"></div>`;
+const dotList = a => `<div class="dots">${a.map(d => `<div class="dot-item"><span class="dot"></span><span>${esc(d.text)}</span></div>`).join('')}</div>`;
+// 행적 타임라인: 같은 시기가 이어지는 부분끼리 묶고, 시기가 바뀔 때마다 시기 이름을 표시
+function timelineHtml(c){
+  const deeds = liveDeeds(c.deeds), showEra = c.eras.length > 0, rows = [];
+  let cur = null;
+  deeds.forEach(d => {
+    if (showEra && d.eraId !== cur){
+      cur = d.eraId; const e = eraOf(c, d.eraId);
+      rows.push(`<div class="tl-row head"><span class="tl-node big"></span><span class="tl-chip ${e ? '' : 'plain'}">${e ? esc(e.label) : '공통'}</span></div>`);
+    }
+    rows.push(`<div class="tl-row"><span class="tl-node"></span><span>${esc(d.text)}</span></div>`);
+  });
+  if (rows.length) rows[rows.length - 1] = rows[rows.length - 1].replace('class="tl-row', 'class="tl-row last');
+  return `<div class="tl">${rows.join('')}</div>`;
+}
 // 시기 비교표 행 데이터
 function compareRows(c){
   const eras = c.eras, dash = '<span class="dash">—</span>', rows = [];
-  rows.push({ label: '사진', cls: 'img', cells: eras.map(e => (e.image || c.image) ? `<img src="${e.image || c.image}" alt="">` : dash) });
+  rows.push({ label: '사진', cls: 'img', cells: eras.map(e => (e.image || c.image) ? pic(e.image || c.image) : dash) });
   if (eras.some(e => e.subtitle.trim())) rows.push({ label: '한 줄 소개', cells: eras.map(e => esc(e.subtitle.trim() || c.subtitle) || dash) });
   const keys = [];
   eras.forEach(e => e.profile.forEach(p => { const k = p.k.trim(); if (k && p.v.trim() && !keys.includes(k)) keys.push(k); }));
   if (keys.length){
     const base = new Map(c.profile.map(p => [p.k.trim(), p.v.trim()]));
     rows.push({ group: '프로필' });
-    keys.forEach(k => rows.push({ label: esc(k), cells: eras.map(e => { const o = e.profile.find(p => p.k.trim() === k && p.v.trim()); return o ? `<b>${esc(o.v)}</b>` : (esc(base.get(k)) || dash); }) }));
+    keys.forEach(k => rows.push({ label: esc(k), cells: eras.map(e => { const o = e.profile.find(p => p.k.trim() === k && p.v.trim()); return o ? esc(o.v) : (esc(base.get(k)) || dash); }) }));
   }
-  if (eras.some(e => e.story.trim())) rows.push({ label: '서사', cls: 'long', cells: eras.map(e => e.story.trim() ? nl(e.story) : dash) });
-  if (eras.some(e => liveDeeds(e.deeds).length)) rows.push({ label: '행적', cls: 'long', cells: eras.map(e => { const d = liveDeeds(e.deeds); return d.length ? `<ol>${d.map(x => `<li>${esc(x.text)}</li>`).join('')}</ol>` : dash; }) });
+  if (eras.some(e => e.story.trim())) rows.push({ label: '서사', cells: eras.map(e => e.story.trim() ? nl(e.story) : dash) });
+  if (eras.some(e => eraDeeds(c, e).length)) rows.push({ label: '행적', cells: eras.map(e => { const d = eraDeeds(c, e); return d.length ? dotList(d) : dash; }) });
   const rels = c.relations.filter(hasEraRel);
   if (rels.length){
     rows.push({ group: '인간관계' });
@@ -534,66 +610,77 @@ function compareTable(c){
     : `<tr class="${r.cls || ''}"><th>${r.label}</th>${r.cells.map(x => `<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 }
 /* ---------- detail ---------- */
-const sec = (title, body) => `<section class="sec"><h2><span class="bar"></span>${title}</h2>${body}</section>`;
+const sec = (title, body, cls = '') => `<section class="sec ${cls}"><h2><span class="bar"></span>${title}</h2>${body}</section>`;
 function relInfo(r){
   const target = r.targetId ? getChar(r.targetId) : null;
   return { target, name: target ? target.name : r.name, image: (target ? repImage(target) : '') || r.image };
 }
-const deedHtml = a => `<ol class="deeds">${a.map(d => `<li>${esc(d.text)}</li>`).join('')}</ol>`;
-// mode: 'page' (era = 지금 보는 시기, 시기가 없으면 null) | 'common' (공통 사항만)
-function sheetHtml(c, era, mode){
-  const common = mode === 'common', hasEras = c.eras.length > 0;
-  if (common) era = null;
-  const img = common ? repImage(c) : ((era && era.image) || c.image || (hasEras ? repImage(c) : ''));
-  const subtitle = (era && era.subtitle.trim()) || c.subtitle;
-  const prof = mergedProfile(c, era);
-  const rels = relList(c, era);
+function relCards(items, link){
+  return `<div class="rel-list">${items.map(({ r, text }) => {
+    const { target, name, image } = relInfo(r);
+    const inner = `<div class="avatar" style="${bgImg(image)}">${image ? '' : esc((name || '?').slice(0, 1))}</div>
+      <div class="txt"><b>${esc(name || '이름 없음')}</b><span>${esc(text)}</span></div>`;
+    return target && link ? `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>` : `<div class="rel">${inner}</div>`;
+  }).join('')}</div>`;
+}
+// 공통 사항 부분들. live = 화면용(링크·유튜브 재생 포함), false = PNG용
+function commonParts(c, live){
+  const hasEras = c.eras.length > 0, img = repImage(c), prof = mergedProfile(c, null), rels = relList(c, null);
   const oc = c.kind !== 'canon';
   const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
   const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
   const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
-  const lbl = era ? esc(era.label || '이 시기') : '';
-  const tagC = hasEras && !common ? '<div class="part-lbl">공통</div>' : '';
-  const storyParts = (c.story.trim() ? `${tagC}<div class="story">${nl(c.story)}</div>` : '') + (era && era.story.trim() ? `<div class="part-lbl era">${lbl}</div><div class="story">${nl(era.story)}</div>` : '');
-  const cd = liveDeeds(c.deeds), ed = era ? liveDeeds(era.deeds) : [];
-  const deedParts = (cd.length ? tagC + deedHtml(cd) : '') + (ed.length ? `<div class="part-lbl era">${lbl}</div>${deedHtml(ed)}` : '');
-  return `<header class="hero ${img ? '' : 'noimg'}">
-      ${img ? `<div class="hero-img"><img src="${img}" alt=""></div>` : ''}
+  return {
+    hero: `<header class="hero ${img ? '' : 'noimg'}">
+      ${img ? `<div class="hero-img">${pic(img)}</div>` : ''}
       <div class="hero-info">
-        <div class="meta"><span>${KIND[c.kind]}</span>${c.origin ? `<span>${esc(c.origin)}</span>` : ''}${era ? `<span class="era-badge">${lbl}</span>` : ''}${common && hasEras ? '<span class="era-badge">공통 사항</span>' : ''}</div>
-        ${subtitle ? `<p class="sub">${esc(subtitle)}</p>` : ''}
+        <div class="meta"><span>${KIND[c.kind]}</span>${c.origin ? `<span>${esc(c.origin)}</span>` : ''}</div>
+        ${c.subtitle ? `<p class="sub">${esc(c.subtitle)}</p>` : ''}
         <h1>${esc(c.name)}</h1>
+        ${c.quote.trim() ? `<p class="quote">「${esc(c.quote.trim())}」</p>` : ''}
         ${c.tags.length ? `<div class="tags">${c.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
-        ${c.quote.trim() ? `<blockquote class="quote">“${esc(c.quote)}”</blockquote>` : ''}
-        ${prof.length ? `<dl class="profile">${prof.map(p => `<dt>${esc(p.k)}</dt><dd class="${p.changed ? 'chg' : ''}">${esc(p.v)}</dd>`).join('')}</dl>` : ''}
+        ${prof.length ? `<dl class="profile">${prof.map(p => `<dt>${esc(p.k)}</dt><dd>${esc(p.v)}</dd>`).join('')}</dl>` : ''}
       </div>
-    </header>
-    ${storyParts ? sec('서사', storyParts) : ''}
-    ${deedParts ? sec('행적', deedParts) : ''}
-    ${rels.length ? sec('인간관계', `<div class="rel-list">${rels.map(({ r, text }) => {
-      const { target, name, image } = relInfo(r);
-      const inner = `<div class="avatar" style="${bgImg(image)}">${image ? '' : esc((name || '?').slice(0, 1))}</div>
-        <div class="txt"><b>${esc(name || '이름 없음')}</b><span>${esc(text)}</span></div>`;
-      return target && !common ? `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>` : `<div class="rel">${inner}</div>`;
-    }).join('')}</div>`) : ''}
-    ${motifs.length ? sec('모티브', `<div class="motif-grid">${motifs.map(m => `<div class="motif">
-      ${m.image ? `<img src="${m.image}" alt="">` : ''}<div class="mt"><b>${esc(m.name)}</b>${m.reason.trim() ? `<p>${esc(m.reason)}</p>` : ''}</div></div>`).join('')}</div>`) : ''}
-    ${songs.length ? sec('테마곡', songs.map(s => {
-      const url = safeUrl(s.url), yt = ytId(url);
-      return `<div class="song"><div class="song-row"><div class="disc">♪</div>
-        <div class="txt"><b>${esc(s.title || '제목 없음')}</b>${s.artist.trim() ? `<span>${esc(s.artist)}</span>` : ''}</div>
-        ${url ? `<a class="listen" href="${esc(url)}" target="_blank" rel="noopener">듣기 ↗</a>` : ''}</div>
-        ${s.note.trim() ? `<p>${esc(s.note)}</p>` : ''}
-        ${yt && !common ? `<iframe class="yt no-capture" src="https://www.youtube.com/embed/${yt}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>` : ''}</div>`;
-    }).join('')) : ''}
-    ${ward.length ? sec('옷장', `<div class="ward-grid">${ward.map(w => `<div class="ward">${w.image ? `<img src="${w.image}" alt="">` : ''}${w.caption.trim() ? `<p>${esc(w.caption)}</p>` : ''}</div>`).join('')}</div>`) : ''}`;
+    </header>`,
+    story: c.story.trim() ? sec(hasEras ? '서사 <small>공통</small>' : '서사', `<div class="story">${nl(c.story)}</div>`) : '',
+    deeds: liveDeeds(c.deeds).length ? sec(hasEras ? '행적 <small>전체 흐름</small>' : '행적', timelineHtml(c)) : '',
+    rels: rels.length ? sec(hasEras ? '인간관계 <small>공통</small>' : '인간관계', relCards(rels, live)) : '',
+    extras: (motifs.length ? sec('모티브', `<div class="motif-grid">${motifs.map(m => `<div class="motif">
+        ${m.image ? pic(m.image) : ''}<div class="mt"><b>${esc(m.name)}</b>${m.reason.trim() ? `<p>${esc(m.reason)}</p>` : ''}</div></div>`).join('')}</div>`) : '')
+      + (songs.length ? sec('테마곡', songs.map(s => {
+        const url = safeUrl(s.url), yt = ytId(url);
+        return `<div class="song"><div class="song-row"><div class="disc">♪</div>
+          <div class="txt"><b>${esc(s.title || '제목 없음')}</b>${s.artist.trim() ? `<span>${esc(s.artist)}</span>` : ''}</div>
+          ${url ? `<a class="listen" href="${esc(url)}" target="_blank" rel="noopener">듣기 ↗</a>` : ''}</div>
+          ${s.note.trim() ? `<p>${esc(s.note)}</p>` : ''}
+          ${yt && live ? `<iframe class="yt no-capture" src="https://www.youtube.com/embed/${yt}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>` : ''}</div>`;
+      }).join('')) : '')
+      + (ward.length ? sec('옷장', `<div class="ward-grid">${ward.map(w => `<div class="ward">${w.image ? pic(w.image) : ''}${w.caption.trim() ? `<p>${esc(w.caption)}</p>` : ''}</div>`).join('')}</div>`) : '')
+  };
+}
+// PNG(공통 사항)용 시트
+function commonSheet(c){ const p = commonParts(c, false); return p.hero + p.story + p.deeds + p.rels + p.extras; }
+// 시기 탭 아래 패널: 이 시기에만 해당하는 것
+function eraPanel(c, e){
+  const changed = mergedProfile(c, e).filter(p => p.changed), ed = eraDeeds(c, e), er = relList(c, e);
+  const sub = e.subtitle.trim();
+  return `<div class="era-panel">
+    <div class="era-head">${e.image ? `<div class="era-pic">${pic(e.image)}</div>` : ''}
+      <div class="era-info"><span class="tl-chip">${esc(e.label)}</span>${e.id === c.mainEra ? '<small class="muted"> 대표</small>' : ''}
+        ${sub ? `<p class="sub">${esc(sub)}</p>` : ''}
+        ${changed.length ? `<dl class="profile">${changed.map(p => `<dt>${esc(p.k)}</dt><dd>${esc(p.v)}</dd>`).join('')}</dl>` : ''}
+        ${!sub && !changed.length ? '<p class="muted" style="font-size:13px">공통과 다른 프로필이 없어요</p>' : ''}</div></div>
+    ${e.story.trim() ? `<div class="sub-h">서사</div><div class="story">${nl(e.story)}</div>` : ''}
+    ${ed.length ? `<div class="sub-h">행적</div><div class="story">${dotList(ed)}</div>` : ''}
+    ${er.length ? `<div class="sub-h">이 시기의 인간관계</div>${relCards(er, true)}` : ''}
+  </div>`;
 }
 function renderDetail(id){
   const c = getChar(id);
   if (!c){ location.hash = '#/'; return; }
   ui.cid = c.id;
-  const list = sortedChars(), idx = list.findIndex(x => x.id === c.id), prev = list[idx - 1], next = list[idx + 1];
-  const era = c.eras.length ? (eraOf(c, ui.eraSel[c.id]) || eraOf(c, c.mainEra) || c.eras[0]) : null;
+  const p = commonParts(c, true), hasEras = c.eras.length > 0;
+  const era = hasEras ? (eraOf(c, ui.eraSel[c.id]) || eraOf(c, c.mainEra) || c.eras[0]) : null;
   app.innerHTML = `<div id="scope">
     <div class="toolbar">
       <a class="btn ghost" href="#/">← 목록</a><div class="spacer"></div>
@@ -601,15 +688,14 @@ function renderDetail(id){
       <button class="btn" data-act="html">HTML 추출</button>
       <a class="btn primary" href="#/e/${encodeURIComponent(c.id)}">수정</a>
     </div>
-    ${era ? `<div class="era-strip">${c.eras.map(e => `<button class="era-btn ${e === era ? 'on' : ''}" data-act="era" data-v="${esc(e.id)}">
-      <span class="era-thumb" style="${bgImg(e.image)}">${e.image ? '' : esc((e.label || '?').slice(0, 1))}</span>
-      <b>${esc(e.label || '이름 없는 시기')}</b>${e.id === c.mainEra ? '<small>대표</small>' : ''}</button>`).join('')}</div>` : ''}
-    <article class="sheet" id="capture">${sheetHtml(c, era, 'page')}</article>
-    ${c.eras.length > 1 ? `<section class="sec"><h2><span class="bar"></span>시기 비교</h2><div class="cmp-scroll">${compareTable(c)}</div></section>` : ''}
-    <nav class="pager">
-      ${prev ? `<a href="#/c/${encodeURIComponent(prev.id)}"><small>← 이전</small>${esc(prev.name)}</a>` : ''}
-      ${next ? `<a class="next" href="#/c/${encodeURIComponent(next.id)}"><small>다음 →</small>${esc(next.name)}</a>` : ''}
-    </nav>
+    <article class="sheet" id="capture">
+      ${p.hero}${p.story}${p.deeds}
+      ${era ? sec('시기별', `<div class="era-strip">${c.eras.map(e => `<button class="era-btn ${e === era ? 'on' : ''}" data-act="era" data-v="${esc(e.id)}">
+          <span class="era-thumb" style="${bgImg(e.image)}">${e.image ? '' : esc((e.label || '?').slice(0, 1))}</span>
+          <b>${esc(e.label || '이름 없는 시기')}</b></button>`).join('')}</div>${eraPanel(c, era)}
+        ${c.eras.length > 1 ? `<div class="sub-h" style="margin-top:22px">시기 비교</div><div class="cmp-scroll">${compareTable(c)}</div>` : ''}`, 'era-sec') : ''}
+      ${p.rels}${p.extras}
+    </article>
     <div class="danger-row"><button class="btn sm" data-act="dup">복제하기</button><button class="btn danger sm" data-act="del-char">삭제하기</button></div>
   </div>`;
   applyVars($('#scope'), colorOf(c));
@@ -618,12 +704,12 @@ function renderDetail(id){
 /* ---------- edit ---------- */
 const SECTIONS = {
   profile:   { label: '항목 추가',   blank: () => ({ k: '', v: '' }) },
-  deeds:     { label: '행적 추가',   blank: () => ({ id: uid(), text: '' }) },
-  eras:      { label: '시기 추가',   blank: () => ({ id: uid(), label: '', image: '', subtitle: '', story: '', deeds: [], profile: [] }), ratio: '3:4' },
-  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', image: '', relation: '', byEra: {} }), ratio: '1:1' },
-  motifs:    { label: '모티브 추가', blank: () => ({ id: uid(), name: '', image: '', reason: '' }), ratio: '1:1' },
+  deeds:     { label: '행적 추가',   blank: () => ({ id: uid(), text: '', eraId: '' }) },
+  eras:      { label: '시기 추가',   blank: () => ({ id: uid(), label: '', image: '', subtitle: '', story: '', profile: [] }) },
+  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', image: '', relation: '', byEra: {} }) },
+  motifs:    { label: '모티브 추가', blank: () => ({ id: uid(), name: '', image: '', reason: '' }) },
   songs:     { label: '테마곡 추가', blank: () => ({ id: uid(), title: '', artist: '', url: '', note: '' }) },
-  wardrobe:  { label: '옷 추가',     blank: () => ({ id: uid(), image: '', caption: '' }), ratio: '3:4' }
+  wardrobe:  { label: '옷 추가',     blank: () => ({ id: uid(), image: '', caption: '' }) }
 };
 // path 예: 'relations', 'eras.0.deeds'
 const baseKey = path => path.split('.').filter(x => isNaN(x)).pop();
@@ -652,7 +738,7 @@ function itemFields(sec, it, i){
           ${eras.map((e, j) => `<label class="era-rel-row"><span>${esc(e.label || `시기 ${j + 1}`)}</span><input class="input" data-bind="${p}byEra.${e.id}" value="${esc(it.byEra[e.id] || '')}" placeholder="이 시기의 관계"></label>`).join('')}</div>` : ''}
       </div>`;
   }
-  if (sec === 'motifs') return `${slot(sec, i, it.image, 'r1')}<div class="fields">${inp('name', '모티브 (인물·동물·작품·물건 등)')}${inp('reason', '닮은 점 한 줄')}</div>`;
+  if (sec === 'motifs') return `${slot(sec, i, it.image, 'r34')}<div class="fields">${inp('name', '모티브 (인물·동물·작품·물건 등)')}${inp('reason', '닮은 점 한 줄')}</div>`;
   if (sec === 'songs') return `<div class="fields"><div class="two">${inp('title', '곡 제목')}${inp('artist', '아티스트')}</div>${inp('url', '링크 (유튜브면 바로 재생)', 'url')}${inp('note', '왜 이 곡인지 한 줄')}</div>`;
   if (sec === 'wardrobe') return `${slot(sec, i, it.image, 'r34')}<div class="fields">${inp('caption', '메모 (예: 외출복, 겨울 코디)')}</div>`;
   return '';
@@ -670,8 +756,7 @@ function eraEdit(e, i, len){
     <div id="sec-${p}.profile">${editList(p + '.profile')}</div>
     <div class="sub-h">이 시기의 서사</div>
     <textarea class="input" data-bind="${p}.story" rows="6" placeholder="이 시기에 있었던 이야기">${esc(e.story)}</textarea>
-    <div class="sub-h">이 시기의 행적</div>
-    <div id="sec-${p}.deeds">${editList(p + '.deeds')}</div>
+    <p class="hint" style="margin-top:8px">이 시기의 행적은 아래 <b>행적</b> 칸에서 시기를 골라 적어요.</p>
     <div class="item-tools" style="margin-top:10px">${tools('eras', i, len, '시기 삭제')}</div>
   </div>`;
 }
@@ -685,9 +770,13 @@ function editList(path){
       <input class="input" data-bind="${path}.${i}.v" value="${esc(p.v)}" placeholder="${isEra ? '이 시기의 값' : '내용'}">
       <button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}" aria-label="삭제">✕</button></div>`).join('') + add;
   }
-  if (key === 'deeds') return arr.map((d, i) => `<div class="kv deed"><span class="deed-n">${i + 1}</span>
-      <input class="input" data-bind="${path}.${i}.text" value="${esc(d.text)}" placeholder="예: 고향을 떠남">
+  if (key === 'deeds'){
+    const eras = draft.eras;
+    return arr.map((d, i) => `<div class="deed-edit ${eras.length ? 'with-era' : ''}">
+      ${eras.length ? `<select class="input deed-sel" data-bind="${path}.${i}.eraId"><option value="">공통</option>${eras.map((e, j) => `<option value="${esc(e.id)}" ${d.eraId === e.id ? 'selected' : ''}>${esc(e.label || `시기 ${j + 1}`)}</option>`).join('')}</select>` : ''}
+      <input class="input deed-txt" data-bind="${path}.${i}.text" value="${esc(d.text)}" placeholder="예: 고향을 떠남">
       <div class="deed-tools">${tools(path, i, len, '✕')}</div></div>`).join('') + add;
+  }
   if (key === 'eras') return arr.map((e, i) => eraEdit(e, i, len)).join('') + add;
   return arr.map((it, i) => `<div class="item-edit">${itemFields(path, it, i)}<div class="item-tools">${tools(path, i, len)}</div></div>`).join('') + add;
 }
@@ -728,7 +817,7 @@ function renderEdit(id){
     ${card('프로필 항목', '나이, 키, 생일, 종족, MBTI… 자유롭게 추가하세요. 원작이 같은 캐릭터들은 항목이 자동으로 맞춰져요.', `<div id="sec-profile">${editList('profile')}</div>`)}
     ${card('시기 (버전)', '같은 캐릭터의 시기별 모습을 나눠 정리해요. 시기마다 사진, 한 줄 소개, 서사, 행적을 따로 쓰고, 프로필은 바뀌는 항목만 적으면 돼요. 시기가 없으면 비워두세요.', `<div id="sec-eras">${editList('eras')}</div><datalist id="profKeys"></datalist>`)}
     ${card('서사', '시기를 나눴다면 여기엔 모든 시기에 공통인 내용을 적어요.', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
-    ${card('행적', '있었던 일을 한 줄씩 순서대로 적어요.', `<div id="sec-deeds">${editList('deeds')}</div>`)}
+    ${card('행적', '있었던 일을 일어난 순서대로 한 줄씩 적어요. 시기가 있으면 행적마다 시기를 고를 수 있고, 시기가 오가도 순서대로 이어서 보여줘요.', `<div id="sec-deeds">${editList('deeds')}</div>`)}
     ${card('인간관계', '상대와 무슨 관계인지 한 줄로. 목록에 있는 캐릭터를 고르면 서로 페이지로 이동할 수 있어요. 시기가 있으면 시기별로 관계를 다르게 적을 수 있어요.', `<div id="sec-relations">${editList('relations')}</div>`)}
     <div id="oc-only" style="${draft.kind === 'canon' ? 'display:none' : ''}">
     ${card('모티브', '모티브가 된 대상과, 어디가 닮았는지 한 줄로.', `<div id="sec-motifs">${editList('motifs')}</div>`)}
@@ -754,6 +843,7 @@ function saveDraft(){
   const ids = new Set(draft.eras.map(e => e.id));
   if (!ids.has(draft.mainEra)) draft.mainEra = '';
   draft.relations.forEach(r => { for (const k in r.byEra) if (!ids.has(k) || !String(r.byEra[k]).trim()) delete r.byEra[k]; });
+  draft.deeds.forEach(d => { if (!ids.has(d.eraId)) d.eraId = ''; });
   draft.updated = Date.now();
   const i = state.characters.findIndex(c => c.id === draft.id);
   if (i >= 0) state.characters[i] = draft; else state.characters.push(draft);
@@ -778,14 +868,14 @@ app.addEventListener('input', e => {
 });
 app.addEventListener('change', e => {
   if (!draft) return;
-  if (e.target.hasAttribute('data-relabel')) rerender('relations');
+  if (e.target.hasAttribute('data-relabel')){ rerender('relations'); rerender('deeds'); }
   if (/^profile\.\d+\.k$/.test(e.target.dataset.bind || '')) refreshKeys();
 });
 app.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('img-slot')){ e.preventDefault(); e.target.click(); } });
 app.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
   const act = t.dataset.act, s = t.dataset.sec, i = +t.dataset.i;
-  const after = path => { rerender(path); if (path === 'eras') rerender('relations'); };
+  const after = path => { rerender(path); if (path === 'eras'){ rerender('relations'); rerender('deeds'); } };
   switch (act){
     case 'filter': ui[t.dataset.k] = ui[t.dataset.k] === t.dataset.v ? '' : t.dataset.v; drawFilters(); drawGrid(); break;
     case 'list-html': { const l = filteredChars(); if (!l.length) return toast('담을 캐릭터가 없어요'); openExport({ title: state.settings.title, build: w => buildListExportHtml(l, w), file: state.settings.title || '캐릭터 목록' }); break; }
@@ -801,8 +891,11 @@ app.addEventListener('click', async e => {
     case 'del-char': deleteChar(ui.cid); break;
     case 'cancel': location.hash = isNew ? '#/' : '#/c/' + encodeURIComponent(draft.id); break;
     case 'save': saveDraft(); break;
+    case 'reorder': state.settings.sort = 'manual'; save(); openReorder(); break;
     case 'add': {
-      getArr(s).push(SECTIONS[baseKey(s)].blank()); dirty = true; after(s);
+      const a = getArr(s), item = SECTIONS[baseKey(s)].blank();
+      if (s === 'deeds' && a.length) item.eraId = a[a.length - 1].eraId; // 바로 앞 행적과 같은 시기로
+      a.push(item); dirty = true; after(s);
       const box = document.getElementById('sec-' + s), items = box ? [...box.children].filter(x => !x.matches('.add')) : [];
       const f = items.length && items[items.length - 1].querySelector('input[type=text], input:not([type])'); f && f.focus(); break;
     }
@@ -815,7 +908,7 @@ app.addEventListener('click', async e => {
     }
     case 'move': { const a = getArr(s), j = i + (+t.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; dirty = true; after(s); break; }
     case 'pick': {
-      const d = draft, src = await pickImage(s === 'main' ? '3:4' : SECTIONS[baseKey(s)].ratio);
+      const d = draft, src = await pickImage();
       if (!src || d !== draft) return;
       if (s === 'main'){ draft.image = src; $('#main-img').innerHTML = mainImg(); }
       else { const it = getArr(s)[i]; if (it){ it.image = src; after(s); } }
@@ -844,6 +937,28 @@ function deleteChar(id){
   save(); toast('삭제했어요'); location.hash = '#/';
 }
 
+function openReorder(){
+  const m = openModal(`<h3>순서 바꾸기</h3><p class="hint">'사용자 설정순'으로 볼 때 이 순서대로 보여요.</p><div class="ro-list"></div>`, () => route());
+  const box = $('.ro-list', m.el);
+  const draw = () => {
+    const a = state.characters;
+    box.innerHTML = a.map((c, i) => `<div class="ro-row">
+      <span class="ro-thumb" style="${bgImg(repImage(c))}">${repImage(c) ? '' : esc((c.name || '?').slice(0, 1))}</span>
+      <span class="ro-name"><b>${esc(c.name)}</b>${c.origin ? `<small>${esc(c.origin)}</small>` : ''}</span>
+      <button class="mini" data-ro="top" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="맨 위로">⤒</button>
+      <button class="mini" data-ro="-1" data-i="${i}" ${i === 0 ? 'disabled' : ''} aria-label="위로">↑</button>
+      <button class="mini" data-ro="1" data-i="${i}" ${i === a.length - 1 ? 'disabled' : ''} aria-label="아래로">↓</button></div>`).join('');
+  };
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-ro]'); if (!b || b.disabled) return;
+    const a = state.characters, i = +b.dataset.i;
+    if (b.dataset.ro === 'top') a.unshift(a.splice(i, 1)[0]);
+    else { const j = i + (+b.dataset.ro); [a[i], a[j]] = [a[j], a[i]]; }
+    save(); draw();
+  });
+  draw();
+}
+
 /* ---------- modal ---------- */
 function openModal(html, onClose){
   const wrap = document.createElement('div'); wrap.className = 'modal-bg';
@@ -857,37 +972,57 @@ function openModal(html, onClose){
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape'){ const m = $('#modal-root').lastElementChild; m && m.querySelector('[data-x="close"]').click(); } });
 
-/* ---------- image cropper ---------- */
-async function pickImage(ratio){
-  const f = await pickFile('image/*'); if (!f) return null;
-  const url = URL.createObjectURL(f);
-  const img = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = url; });
-  if (!img){ URL.revokeObjectURL(url); toast('이미지를 읽을 수 없어요'); return null; }
-  const out = await openCropper(img, ratio, /png|webp|gif/.test(f.type));
-  URL.revokeObjectURL(url); return out;
+/* ---------- image cropper (항상 3:4) ---------- */
+let picking = false;
+function loadImageFile(f){
+  // 1차: blob URL, 실패하면 2차: FileReader(dataURL)로 다시 시도
+  return new Promise(res => {
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => res({ img: im, done: () => URL.revokeObjectURL(url) });
+    im.onerror = () => {
+      URL.revokeObjectURL(url);
+      const fr = new FileReader();
+      fr.onload = () => { const im2 = new Image(); im2.onload = () => res({ img: im2, done: () => {} }); im2.onerror = () => res(null); im2.src = fr.result; };
+      fr.onerror = () => res(null);
+      fr.readAsDataURL(f);
+    };
+    im.src = url;
+  });
 }
-function openCropper(img, ratio, transparent){
+async function pickImage(){
+  if (picking) return null;
+  picking = true;
+  try {
+    const f = await pickFile('image/*'); if (!f) return null;
+    toast('사진 불러오는 중…', 6000);
+    const loaded = await loadImageFile(f);
+    if (!loaded || !loaded.img.naturalWidth){
+      toast(/heic|heif/i.test(f.type + f.name) ? 'HEIC 사진은 이 브라우저에서 열 수 없어요. JPG나 스크린샷으로 올려 주세요.' : '이 사진을 읽을 수 없어요. 다른 사진으로 시도해 주세요.', 4000);
+      return null;
+    }
+    $('#toast').classList.remove('show');
+    const out = await openCropper(loaded.img, /png|webp|gif/.test(f.type));
+    loaded.done(); return out;
+  } finally { picking = false; }
+}
+function openCropper(img, transparent){
   return new Promise(resolve => {
     let result = null;
-    const ratios = ['1:1', '3:4', '4:3', '9:16', '16:9', '원본'];
-    const m = openModal(`<h3>사진 자르기</h3>
-      <div class="ratio-row">${ratios.map(r => `<button class="chip" data-r="${r}">${r}</button>`).join('')}</div>
+    const m = openModal(`<h3>사진 자르기 <small class="muted" style="font-size:13px">3:4</small></h3>
       <div class="crop-stage"><img draggable="false" alt=""></div>
       <div class="zoom-row"><span>−</span><input type="range" min="1" max="5" step="0.01" value="1" aria-label="확대"><span>＋</span></div>
       <p class="hint" style="text-align:center">드래그로 위치 이동 · 슬라이더 / 두 손가락 / 휠로 확대</p>
       <div class="modal-actions"><button class="btn ghost" data-x="close">취소</button><button class="btn primary" data-ok>완료</button></div>`, () => resolve(result));
     const stage = $('.crop-stage', m.el), im = $('img', stage), slider = $('input[type=range]', m.el);
     im.src = img.src;
-    const nw = img.naturalWidth, nh = img.naturalHeight;
-    let W, H, base, zoom = 1, scale, x = 0, y = 0, cur = ratio;
+    const nw = img.naturalWidth, nh = img.naturalHeight, RW = 3, RH = 4;
+    let W = 0, H = 0, base, zoom = 1, scale, x = 0, y = 0;
     function setup(){
-      const [rw, rh] = cur === '원본' ? [nw, nh] : cur.split(':').map(Number);
-      const avail = stage.parentElement.clientWidth - 40, maxH = window.innerHeight * .5;
-      W = avail; H = W * rh / rw; if (H > maxH){ H = maxH; W = H * rw / rh; }
+      const avail = Math.max(200, (stage.parentElement.clientWidth || 320) - 40), maxH = window.innerHeight * .55;
+      W = Math.min(avail, 360); H = W * RH / RW; if (H > maxH){ H = maxH; W = H * RW / RH; }
       stage.style.width = W + 'px'; stage.style.height = H + 'px';
       base = Math.max(W / nw, H / nh); zoom = 1; slider.value = 1; scale = base;
       x = (W - nw * scale) / 2; y = (H - nh * scale) / 2; apply();
-      m.el.querySelectorAll('[data-r]').forEach(b => b.classList.toggle('on', b.dataset.r === cur));
     }
     function apply(){
       const dw = nw * scale, dh = nh * scale;
@@ -911,12 +1046,11 @@ function openCropper(img, ratio, transparent){
     stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
     stage.addEventListener('wheel', e => { e.preventDefault(); const r = stage.getBoundingClientRect(); zoomTo(zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1), e.clientX - r.left, e.clientY - r.top); }, { passive: false });
     slider.addEventListener('input', () => zoomTo(+slider.value));
-    m.el.addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (b){ cur = b.dataset.r; setup(); } });
     $('[data-ok]', m.el).onclick = () => {
+      if (!W) setup();
       const srcW = W / scale, srcH = H / scale;
-      let OW, OH; const LONG = 1100;
-      if (W >= H){ OW = LONG; OH = Math.round(LONG * H / W); } else { OH = LONG; OW = Math.round(LONG * W / H); }
-      if (srcW < OW){ const f = srcW / OW; OW = Math.round(OW * f); OH = Math.round(OH * f); }
+      let OH = 1200, OW = 900;
+      if (srcW < OW){ OW = Math.round(srcW); OH = Math.round(srcW * RH / RW); }
       const cv = document.createElement('canvas'); cv.width = OW; cv.height = OH;
       const ctx = cv.getContext('2d'); ctx.imageSmoothingQuality = 'high';
       if (!transparent){ ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, OW, OH); }
@@ -924,7 +1058,8 @@ function openCropper(img, ratio, transparent){
       result = transparent ? cv.toDataURL('image/webp', .9) : cv.toDataURL('image/jpeg', .88);
       m.close();
     };
-    requestAnimationFrame(setup);
+    // 모달이 그려진 뒤 크기를 재고, 혹시 0이면 한 번 더
+    requestAnimationFrame(() => { setup(); if (!stage.clientWidth) setTimeout(setup, 60); });
   });
 }
 
@@ -966,7 +1101,7 @@ async function eraPng(c, mode){
   const box = document.createElement('div');
   box.className = 'png-box'; box.style.width = W + 'px';
   let h = '';
-  if (mode !== 'table') h += `<div class="sheet">${sheetHtml(c, null, 'common')}</div>`;
+  if (mode !== 'table') h += `<div class="sheet">${commonSheet(c)}</div>`;
   if (mode !== 'common') h += `<div class="png-cmp">${mode === 'table'
     ? `<div class="pc-head"><div class="pc-name">${esc(c.name)}</div><div class="pc-sub">시기별 비교${c.origin ? ' · ' + esc(c.origin) : ''}</div></div>`
     : `<h2 class="pc-h2"><span class="bar"></span>시기별 비교</h2>`}${compareTable(c)}</div>`;
@@ -1006,7 +1141,19 @@ function buildExportHtml(c, withImg){
   const table = rows => `<table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;${card}overflow:hidden;font-size:14px;">${rows.map((p, i) => {
     const bd = i < rows.length - 1 ? 'border-bottom:1px solid #f0edf5;' : '';
     return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${esc(p.v)}</td></tr>`; }).join('')}</table>`;
-  const deeds = a => `<ol style="margin:0;padding:12px 16px 12px 36px;${card}">${a.map(d => `<li style="margin:2px 0;">${esc(d.text)}</li>`).join('')}</ol>`;
+  const dots = a => `<div style="${card}padding:10px 14px;">${a.map(d => `<div style="display:flex;gap:8px;margin:3px 0;"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:${t};margin-top:10px;"></span><span>${esc(d.text)}</span></div>`).join('')}</div>`;
+  const timeline = () => {
+    const ds = liveDeeds(c.deeds), rows = []; let cur = null;
+    ds.forEach((d, i) => {
+      const last = i === ds.length - 1, line = last ? 'transparent' : soft2;
+      if (hasEras && d.eraId !== cur){
+        cur = d.eraId; const e = eraOf(c, d.eraId);
+        rows.push(`<div style="position:relative;margin-left:7px;padding:0 0 8px 20px;border-left:2px solid ${soft2};"><span style="position:absolute;left:-8px;top:4px;width:14px;height:14px;border-radius:50%;background:${t};"></span><span style="display:inline-block;font-size:12px;font-weight:800;padding:1px 10px;border-radius:999px;${e ? `background:${t};color:${on};` : `background:${soft2};color:${tt};`}">${e ? esc(e.label) : '공통'}</span></div>`);
+      }
+      rows.push(`<div style="position:relative;margin-left:7px;padding:0 0 10px 20px;border-left:2px solid ${line};"><span style="position:absolute;left:-6px;top:7px;width:6px;height:6px;border-radius:50%;background:#fff;border:2px solid ${t};"></span>${esc(d.text)}</div>`);
+    });
+    return `<div style="${card}padding:14px 16px 4px;">${rows.join('')}</div>`;
+  };
   const avatar = (src, name) => src ? `<img src="${src}" alt="" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center 20%;flex:none;">`
     : `<div style="width:50px;height:50px;border-radius:50%;background:${soft};color:${tt};font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;">${esc((name || '?').slice(0, 1))}</div>`;
   const relRow = (r, text) => { const { name, image } = relInfo(r);
@@ -1015,42 +1162,43 @@ function buildExportHtml(c, withImg){
   const prof = mergedProfile(c, null);
   const rels = relList(c, null);
   const cd = liveDeeds(c.deeds);
+  const IMG = (src, maxW) => `<img src="${src}" alt="" style="width:100%;${maxW ? `max-width:${maxW}px;` : ''}aspect-ratio:3/4;object-fit:cover;object-position:center 20%;display:block;margin:0 auto;border-radius:18px;">`;
   const oc = c.kind !== 'canon';
   const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
   const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
   const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
   let h = `<div style="max-width:720px;margin:0 auto;padding:22px;font-family:Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1d1b26;line-height:1.7;background:#faf9fc;border-radius:24px;word-break:keep-all;box-sizing:border-box;">`;
   const img = I(repImage(c));
-  if (img) h += `<div style="text-align:center;"><img src="${img}" alt="${esc(c.name)}" style="max-width:320px;width:100%;height:auto;border-radius:22px;display:inline-block;"></div>`;
+  if (img) h += IMG(img, 300);
   h += `<div style="text-align:center;margin-top:16px;">`;
   h += `<div style="margin-bottom:4px;">${[KIND[c.kind], c.origin].filter(Boolean).map(x => `<span style="display:inline-block;margin:2px;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid ${soft2};color:${tt};background:#fff;">${esc(x)}</span>`).join('')}</div>`;
   if (c.subtitle) h += `<div style="color:${tt};font-weight:700;font-size:14px;">${esc(c.subtitle)}</div>`;
   h += `<div style="font-size:30px;font-weight:800;line-height:1.3;">${esc(c.name)}</div>`;
   if (c.tags.length) h += `<div style="margin-top:8px;">${c.tags.map(x => `<span style="display:inline-block;margin:2px;font-size:12px;padding:2px 10px;border-radius:999px;background:${soft2};color:${tt};font-weight:700;">#${esc(x)}</span>`).join('')}</div>`;
   h += `</div>`;
-  if (c.quote.trim()) h += `<div style="margin:18px 0;padding:12px 16px;background:${soft};border-left:4px solid ${t};border-radius:0 14px 14px 0;">“${esc(c.quote)}”</div>`;
+  if (c.quote.trim()) h += `<div style="text-align:center;margin:10px 0 0;font-size:14px;color:${tt};">「${esc(c.quote.trim())}」</div>`;
   if (prof.length) h += table(prof);
   if (c.story.trim()) h += H2(hasEras ? '서사 (공통)' : '서사') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
-  if (cd.length) h += H2(hasEras ? '행적 (공통)' : '행적') + deeds(cd);
+  if (cd.length) h += H2(hasEras ? '행적 (전체 흐름)' : '행적') + timeline();
   if (rels.length) h += H2(hasEras ? '인간관계 (공통)' : '인간관계') + rels.map(({ r, text }) => relRow(r, text)).join('');
   if (hasEras){
     h += H2('시기별');
     h += c.eras.map(e => {
       const src = I(e.image), changed = mergedProfile(c, e).filter(p => p.changed);
-      const ed = liveDeeds(e.deeds), er = c.relations.filter(r => (r.byEra[e.id] || '').trim());
+      const ed = eraDeeds(c, e), er = c.relations.filter(r => (r.byEra[e.id] || '').trim());
       let b = `<div style="${card}overflow:hidden;margin-bottom:16px;"><div style="background:${t};color:${on};padding:10px 16px;font-weight:800;font-size:16px;">${esc(e.label)}${e.id === c.mainEra ? ' ★' : ''}</div><div style="padding:14px 16px;">`;
-      if (src) b += `<div style="text-align:center;"><img src="${src}" alt="" style="max-width:240px;width:100%;height:auto;border-radius:16px;display:inline-block;"></div>`;
+      if (src) b += IMG(src, 220);
       if (e.subtitle.trim()) b += `<div style="text-align:center;color:${tt};font-weight:700;margin-top:8px;">${esc(e.subtitle)}</div>`;
       if (changed.length) b += H3('바뀐 프로필') + table(changed).replace('margin-top:14px;', '');
       if (e.story.trim()) b += H3('서사') + `<div style="line-height:1.8;">${nl(e.story)}</div>`;
-      if (ed.length) b += H3('행적') + deeds(ed);
+      if (ed.length) b += H3('행적') + dots(ed);
       if (er.length) b += H3('인간관계') + er.map(r => relRow(r, r.byEra[e.id])).join('');
       return b + `</div></div>`;
     }).join('');
   }
   if (motifs.length) h += H2('모티브') + `<div style="display:flex;flex-wrap:wrap;gap:12px;">${motifs.map(m => {
     const src = I(m.image);
-    return `<div style="width:calc(50% - 6px);box-sizing:border-box;${card}overflow:hidden;">${src ? `<img src="${src}" alt="" style="width:100%;height:auto;display:block;">` : ''}<div style="padding:10px 12px;"><b>${esc(m.name)}</b>${m.reason.trim() ? `<div style="color:#6b6880;font-size:13px;line-height:1.5;margin-top:2px;">${esc(m.reason)}</div>` : ''}</div></div>`;
+    return `<div style="width:calc(50% - 6px);box-sizing:border-box;${card}overflow:hidden;">${src ? `<img src="${src}" alt="" style="width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 20%;display:block;">` : ''}<div style="padding:10px 12px;"><b>${esc(m.name)}</b>${m.reason.trim() ? `<div style="color:#6b6880;font-size:13px;line-height:1.5;margin-top:2px;">${esc(m.reason)}</div>` : ''}</div></div>`;
   }).join('')}</div>`;
   if (songs.length) h += H2('테마곡') + songs.map(s => {
     const url = safeUrl(s.url), yt = ytId(url);
@@ -1063,7 +1211,7 @@ function buildExportHtml(c, withImg){
   }).join('');
   if (ward.length) h += H2('옷장') + `<div style="display:flex;flex-wrap:wrap;gap:10px;">${ward.map(w => {
     const src = I(w.image);
-    return `<div style="width:calc(33.33% - 7px);min-width:140px;flex-grow:1;max-width:calc(50% - 5px);box-sizing:border-box;">${src ? `<img src="${src}" alt="" style="width:100%;height:auto;display:block;border-radius:14px;">` : ''}${w.caption.trim() ? `<div style="font-size:13px;color:#6b6880;margin-top:4px;">${esc(w.caption)}</div>` : ''}</div>`;
+    return `<div style="width:calc(33.33% - 7px);min-width:140px;flex-grow:1;max-width:calc(50% - 5px);box-sizing:border-box;">${src ? `<img src="${src}" alt="" style="width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 20%;display:block;border-radius:14px;">` : ''}${w.caption.trim() ? `<div style="font-size:13px;color:#6b6880;margin-top:4px;">${esc(w.caption)}</div>` : ''}</div>`;
   }).join('')}</div>`;
   return h + `</div>`;
 }
