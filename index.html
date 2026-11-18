@@ -286,8 +286,9 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 /* 시기 패널 */
 .era-panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px}
 .era-panel .story{padding:12px 14px;background:var(--bg)}
-.era-head{display:flex;gap:14px;align-items:flex-start}
-.era-pic{width:120px;flex:none}
+.era-head{display:flex;gap:14px;align-items:center}
+.era-pic{width:76px;flex:none}
+.era-pic .pic34{border-radius:12px}
 .era-info{flex:1;min-width:0}
 .era-name{font-size:24px;font-weight:800;line-height:1.25;margin-top:6px}
 .era-info .sub{margin:2px 0 0}
@@ -387,6 +388,19 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 .sync-btn{margin-top:10px;width:100%}
 .sync-pick{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .sync-pick small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 여러 칸 골라서 순서 바꾸기 */
+.drag-h{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;width:34px;height:34px;flex:none;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:0;touch-action:none;cursor:grab;display:inline-flex;align-items:center;justify-content:center}
+.drag-h:active{cursor:grabbing;background:var(--soft)}
+.dragging{position:relative;z-index:20;box-shadow:0 14px 30px -12px rgba(0,0,0,.45);background:var(--surface);border-radius:12px;transition:none !important}
+.drag-shift{transition:transform .15s ease}
+.sel-btn{width:30px;height:30px;flex:none;border-radius:50%;border:2px solid var(--soft2);background:var(--surface);color:var(--on-theme);font-size:14px;font-weight:800;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.sel-btn.on{background:var(--theme);border-color:var(--theme)}
+.picked{outline:2px solid var(--theme);outline-offset:1px;border-radius:12px}
+.kv-tools,.deed-tools,.item-tools{align-items:center}
+.sel-bar{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));z-index:5;display:flex;align-items:center;gap:6px;margin:8px 0;padding:8px 10px;border-radius:999px;background:var(--text);color:var(--surface);box-shadow:0 8px 24px -10px rgba(0,0,0,.5)}
+.sel-bar span{font-size:13px;font-weight:700;flex:1;padding-left:6px}
+.sel-bar button{border:0;background:rgba(255,255,255,.14);color:inherit;width:38px;height:34px;border-radius:999px;font-size:16px}
+.sel-bar .sel-done{width:auto;padding:0 14px;font-size:13px;font-weight:700;background:var(--theme);color:var(--on-theme)}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1d1b26;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;transition:.2s;z-index:300;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -804,8 +818,7 @@ function renderDetail(id){
       ${p.hero}${p.story}${p.deeds}${p.rels}
       ${era ? sec('시기별', `<div class="era-strip">${c.eras.map(e => `<button class="era-btn ${e === era ? 'on' : ''}" data-act="era" data-v="${esc(e.id)}">
           <span class="era-thumb" style="${bgImg(e.image)}">${e.image ? '' : esc((e.label || '?').slice(0, 1))}</span>
-          <b>${e.au ? 'AU · ' : ''}${esc(e.label || '이름 없는 시기')}</b></button>`).join('')}</div>${eraPanel(c, era)}
-        <div class="sub-h" style="margin-top:22px">시기 비교 <small><span class="lg-chg"></span>표시된 값은 ${c.kind === 'canon' ? '원작' : '기본'}과 달라진 부분</small></div>${compareTable(c)}`, 'era-sec') : ''}
+          <b>${e.au ? 'AU · ' : ''}${esc(e.label || '이름 없는 시기')}</b></button>`).join('')}</div>${eraPanel(c, era)}`, 'era-sec') : ''}
       ${p.extras}
     </article>
     <div class="danger-row"><button class="btn sm" data-act="dup">복제하기</button><button class="btn danger sm" data-act="del-char">삭제하기</button></div>
@@ -828,9 +841,20 @@ const baseKey = path => path.split('.').filter(x => isNaN(x)).pop();
 const getArr = path => path.split('.').reduce((o, k) => o[k], draft);
 const slot = (sec, i, src, cls) => `<div class="img-slot ${cls} ${src ? 'has' : ''}" role="button" tabindex="0" data-act="pick" data-sec="${sec}" data-i="${i}" style="${bgImg(src)}">${src
   ? `<button class="img-x" data-act="clear-img" data-sec="${sec}" data-i="${i}" aria-label="사진 삭제">✕</button>` : '<span>＋ 사진</span>'}</div>`;
-const tools = (path, i, len, delLabel = '삭제') => `<button class="mini" data-act="move" data-sec="${path}" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>↑</button>
-  <button class="mini" data-act="move" data-sec="${path}" data-i="${i}" data-d="1" ${i === len - 1 ? 'disabled' : ''}>↓</button>
-  <button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}">${delLabel}</button>`;
+// 순서 바꾸기: 칸을 여러 개 골라서(✓) 한 번에 위/아래/맨 위/맨 아래로
+let picks = new Map();
+const pickSet = path => { if (!picks.has(path)) picks.set(path, new Set()); return picks.get(path); };
+const isPicked = (path, item) => !!(picks.get(path) && picks.get(path).has(item));
+// 손잡이(⠿)를 눌러 끌면 그 칸을 원하는 위치로 옮김
+const selBtn = (path, i) => `<button class="drag-h" data-drag="${path}" data-i="${i}" aria-label="끌어서 순서 바꾸기" title="끌어서 순서 바꾸기">⠿</button>`;
+const selBar = () => '';
+function moveSel(path, how){
+  const a = getArr(path), S = pickSet(path);
+  if (how === 'up') for (let i = 1; i < a.length; i++){ if (S.has(a[i]) && !S.has(a[i - 1])) [a[i - 1], a[i]] = [a[i], a[i - 1]]; }
+  if (how === 'down') for (let i = a.length - 2; i >= 0; i--){ if (S.has(a[i]) && !S.has(a[i + 1])) [a[i], a[i + 1]] = [a[i + 1], a[i]]; }
+  if (how === 'top' || how === 'bottom'){ const x = a.filter(v => S.has(v)), y = a.filter(v => !S.has(v)); a.splice(0, a.length, ...(how === 'top' ? x.concat(y) : y.concat(x))); }
+}
+const tools = (path, i, len, delLabel = '삭제') => `${selBtn(path, i)}<button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}">${delLabel}</button>`;
 
 function itemFields(sec, it, i){
   const p = `${sec}.${i}.`;
@@ -887,20 +911,20 @@ function editList(path){
   const add = `<button class="btn add" data-act="add" data-sec="${path}">＋ ${SECTIONS[key].label}</button>`;
   if (key === 'profile'){
     const isEra = path !== 'profile';
-    return arr.map((p, i) => `<div class="kv">
+    return arr.map((p, i) => `<div class="kv ${isPicked(path, p) ? 'picked' : ''}">
       <input class="input" data-bind="${path}.${i}.k" value="${esc(p.k)}" placeholder="${isEra ? '항목 (예: 나이)' : '항목'}" ${isEra ? 'list="profKeys"' : ''}>
       <textarea class="input grow" rows="1" data-bind="${path}.${i}.v" placeholder="${isEra ? '이 시기의 값' : '내용 (엔터로 줄바꿈)'}">${esc(p.v)}</textarea>
-      <div class="kv-tools"><button class="mini" data-act="move" data-sec="${path}" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''} aria-label="위로">↑</button><button class="mini" data-act="move" data-sec="${path}" data-i="${i}" data-d="1" ${i === len - 1 ? 'disabled' : ''} aria-label="아래로">↓</button><button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}" aria-label="삭제">✕</button></div></div>`).join('') + add;
+      <div class="kv-tools">${tools(path, i, len, '✕')}</div></div>`).join('') + selBar(path) + add;
   }
   if (key === 'deeds'){
     const eras = draft.eras;
-    return arr.map((d, i) => `<div class="deed-edit ${eras.length ? 'with-era' : ''}">
+    return arr.map((d, i) => `<div class="deed-edit ${eras.length ? 'with-era' : ''} ${isPicked(path, d) ? 'picked' : ''}">
       ${eras.length ? `<select class="input deed-sel" data-bind="${path}.${i}.eraId"><option value="">공통</option>${eras.map((e, j) => `<option value="${esc(e.id)}" ${d.eraId === e.id ? 'selected' : ''}>${esc(e.label || `시기 ${j + 1}`)}${e.au ? ' (AU)' : ''}</option>`).join('')}</select>` : ''}
       <input class="input deed-txt" data-bind="${path}.${i}.text" value="${esc(d.text)}" placeholder="예: 고향을 떠남">
-      <div class="deed-tools">${tools(path, i, len, '✕')}</div></div>`).join('') + add;
+      <div class="deed-tools">${tools(path, i, len, '✕')}</div></div>`).join('') + selBar(path) + add;
   }
   if (key === 'eras') return arr.map((e, i) => eraEdit(e, i, len)).join('') + add;
-  return arr.map((it, i) => `<div class="item-edit">${itemFields(path, it, i)}<div class="item-tools">${tools(path, i, len)}</div></div>`).join('') + add;
+  return arr.map((it, i) => `<div class="item-edit ${isPicked(path, it) ? 'picked' : ''}">${itemFields(path, it, i)}<div class="item-tools">${tools(path, i, len)}</div></div>`).join('') + selBar(path) + add;
 }
 const autosize = t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 2 + 'px'; };
 const autosizeAll = (root = document) => root.querySelectorAll('textarea.grow').forEach(autosize);
@@ -916,7 +940,7 @@ function renderEdit(id){
     if (ui.kind) draft.kind = ui.kind;
     if (ui.origin && ui.origin !== NO_ORIGIN){ draft.origin = ui.origin; const keys = originKeys(ui.origin, draft.id); if (keys.length) draft.profile = keys.map(k => ({ k, v: '' })); }
   }
-  dirty = false;
+  dirty = false; picks = new Map();
   const card = (title, hint, body) => `<section class="card"><h2><span class="bar"></span>${title}</h2>${hint ? `<p class="hint">${hint}</p>` : ''}${body}</section>`;
   app.innerHTML = `<div id="scope">
     <div class="toolbar edit-tools">
@@ -1085,10 +1109,16 @@ app.addEventListener('click', async e => {
       const a = getArr(s), it = a[i], key = baseKey(s);
       const hasContent = Object.entries(it).some(([k, v]) => k !== 'id' && (Array.isArray(v) ? v.length : String(v).trim()));
       if (key !== 'profile' && key !== 'deeds' && hasContent && !confirm(key === 'eras' ? '이 시기를 삭제할까요? 시기 안의 내용도 함께 지워져요.' : '이 항목을 삭제할까요?')) return;
-      if (key === 'eras' && draft.mainEra === it.id) draft.mainEra = '';
+      if (key === 'eras'){ if (draft.mainEra === it.id) draft.mainEra = ''; [...picks.keys()].forEach(k => { if (k.startsWith('eras.')) picks.delete(k); }); }
+      if (picks.get(s)) picks.get(s).delete(it);
       a.splice(i, 1); dirty = true; after(s); break;
     }
-    case 'move': { const a = getArr(s), j = i + (+t.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; dirty = true; after(s); break; }
+    case 'move': { const a = getArr(s), j = i + (+t.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; dirty = true;
+      if (s === 'eras') [...picks.keys()].forEach(k => { if (k.startsWith('eras.')) picks.delete(k); });
+      after(s); break; }
+    case 'pick-sel': { const S = pickSet(s), it = getArr(s)[i]; S.has(it) ? S.delete(it) : S.add(it); rerender(s); break; }
+    case 'selmove': moveSel(s, t.dataset.d); dirty = true; rerender(s); break;
+    case 'selclear': picks.delete(s); rerender(s); break;
     case 'pick': {
       const d = draft, src = await pickImage();
       if (!src || d !== draft) return;
@@ -1108,6 +1138,59 @@ app.addEventListener('click', async e => {
       draft.color = ''; dirty = true; $('#cColor').value = state.settings.theme;
       $('#cColorLabel').textContent = '사이트 테마 색 사용 중'; applyVars($('#scope'), state.settings.theme); break;
   }
+});
+/* ---------- 끌어서 순서 바꾸기 ---------- */
+app.addEventListener('pointerdown', e => {
+  const h = e.target.closest('[data-drag]'); if (!h || !draft) return;
+  e.preventDefault();
+  const path = h.dataset.drag, from = +h.dataset.i;
+  const row = h.closest('.kv, .deed-edit, .item-edit'); if (!row) return;
+  const list = row.parentElement;
+  const rows = [...list.children].filter(el => el.matches('.kv, .deed-edit, .item-edit'));
+  if (rows.length < 2) return;
+  const sy0 = window.scrollY;
+  const rects = rows.map(r => { const b = r.getBoundingClientRect(); return { top: b.top + sy0, h: b.height }; });
+  const gap = rects.length > 1 ? Math.max(0, rects[1].top - (rects[0].top + rects[0].h)) : 8;
+  const shift = rects[from].h + gap;
+  let lastY = e.clientY, to = from, raf = 0, done = false;
+  const startPageY = e.clientY + sy0;
+  row.classList.add('dragging');
+  rows.forEach(r => { if (r !== row) r.classList.add('drag-shift'); });
+  try { h.setPointerCapture(e.pointerId); } catch {}
+  const update = () => {
+    const dy = lastY + window.scrollY - startPageY;
+    row.style.transform = `translateY(${dy}px)`;
+    const mid = rects[from].top + rects[from].h / 2 + dy;
+    to = 0;
+    rects.forEach((r, j) => { if (j !== from && r.top + r.h / 2 < mid) to++; });
+    rows.forEach((r, j) => {
+      if (j === from) return;
+      let t = 0;
+      if (to > from && j > from && j <= to) t = -shift;
+      if (to < from && j >= to && j < from) t = shift;
+      r.style.transform = t ? `translateY(${t}px)` : '';
+    });
+  };
+  // 화면 위/아래 끝 근처에서는 자동으로 스크롤
+  const tick = () => {
+    if (done) return;
+    const edge = 70;
+    if (lastY < edge) { window.scrollBy(0, -8); update(); }
+    else if (lastY > window.innerHeight - edge) { window.scrollBy(0, 8); update(); }
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+  const move = ev => { lastY = ev.clientY; update(); };
+  const end = () => {
+    done = true; cancelAnimationFrame(raf);
+    h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', end); h.removeEventListener('pointercancel', end);
+    rows.forEach(r => { r.style.transform = ''; r.classList.remove('drag-shift', 'dragging'); });
+    if (to !== from){
+      const a = getArr(path), [it] = a.splice(from, 1); a.splice(to, 0, it);
+      dirty = true; rerender(path);
+    }
+  };
+  h.addEventListener('pointermove', move); h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
 });
 $('#settingsBtn').onclick = openSettings;
 
@@ -1271,33 +1354,8 @@ async function capturePng(el, fileName, maxScale = 2){
   } catch (err){ console.error(err); toast('이미지 생성에 실패했어요'); return false; }
 }
 async function savePng(c){
-  if (!c) return;
-  if (!c.eras.length){ const el = $('#capture'); if (el) await capturePng(el, `${c.name || 'character'}.png`); return; }
-  const m = openModal(`<h3>PNG 저장</h3>
-    <p class="hint">공통 사항과 시기별로 달라지는 사항을 나눠서 저장할 수 있어요. 달라지는 사항은 비교하기 쉽게 표로 저장돼요.</p>
-    <div class="btn-col">
-      <button class="btn" data-p="common">공통 사항만</button>
-      <button class="btn" data-p="table">시기별 비교표만</button>
-      <button class="btn primary" data-p="both">둘 다 한 장에</button>
-    </div>`);
-  m.el.addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; m.close(); eraPng(c, b.dataset.p); });
-}
-async function eraPng(c, mode){
-  const tableW = 110 + (c.eras.length + 1) * 200;
-  const W = mode === 'common' ? 760 : Math.max(760, tableW + 48);
-  const box = document.createElement('div');
-  box.className = 'png-box'; box.style.width = W + 'px';
-  let h = '';
-  if (mode !== 'table') h += `<div class="sheet">${commonSheet(c)}</div>`;
-  if (mode !== 'common') h += `<div class="png-cmp">${mode === 'table'
-    ? `<div class="pc-head"><div class="pc-name">${esc(c.name)}</div><div class="pc-sub">시기별 비교${c.origin ? ' · ' + esc(c.origin) : ''}</div></div>`
-    : `<h2 class="pc-h2"><span class="bar"></span>시기별 비교</h2>`}${compareTable(c)}</div>`;
-  box.innerHTML = h;
-  applyVars(box, colorOf(c));
-  window.scrollTo(0, 0);
-  document.body.append(box);
-  await capturePng(box, `${c.name || 'character'}-${{ common: '공통', table: '시기비교', both: '전체' }[mode]}.png`, 1.5);
-  box.remove();
+  const el = $('#capture'); if (!el || !c) return;
+  await capturePng(el, `${c.name || 'character'}.png`);
 }
 async function groupPng(){
   const list = filteredChars();
