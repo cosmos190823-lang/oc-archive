@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8b7cf6">
+<title>자캐 아카이브</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --theme:#8b7cf6; --on-theme:#fff; --soft:#f1effe; --soft2:#e2defd; --theme-text:#4a3fa0;
+  --bg:#f7f6fb; --bg-blur:rgba(247,246,251,.86); --surface:#ffffff; --text:#1d1b26; --muted:#6b6880; --line:#e7e4ef;
+  --radius:18px;
+}
+:root.dark{
+  --bg:#14131a; --bg-blur:rgba(20,19,26,.86); --surface:#1e1c26; --text:#ecebf3; --muted:#9a97ad; --line:#2f2c3a;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.muted{color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:4px 0 10px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));background:var(--bg-blur);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:18px;color:var(--theme-text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:18px;display:grid;place-items:center}
+#app{max-width:960px;margin:0 auto;padding:16px 16px 90px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:14px;white-space:nowrap;line-height:1.3}
+.btn.primary{background:var(--theme);color:var(--on-theme);border-color:transparent}
+.btn.ghost{background:transparent}
+.btn.danger{color:#e5484d;border-color:#f1c2c4;background:transparent}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn.big{width:100%;padding:14px;font-size:16px}
+.btn.add{width:100%;border-style:dashed;background:transparent;color:var(--theme-text);border-radius:14px;border-color:var(--soft2);border-width:2px;margin-top:4px}
+.btn:disabled{opacity:.4}
+.mini{padding:4px 10px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-weight:600}
+.mini.danger{color:#e5484d}
+.mini:disabled{opacity:.35}
+.toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar .spacer{flex:1}
+.tb-title{font-size:15px}
+.chip{padding:6px 13px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:600}
+.chip.on{background:var(--theme);color:var(--on-theme);border-color:transparent}
+
+/* inputs */
+.input{width:100%;padding:10px 13px;border-radius:12px;border:1px solid var(--line);background:var(--surface);outline:none;font-size:15px;transition:border-color .15s}
+.input:focus{border-color:var(--theme)}
+textarea.input{resize:vertical;min-height:140px;line-height:1.7}
+select.input{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+.field{display:block;margin-bottom:12px}
+.field>span{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:5px}
+.check{display:flex;align-items:center;gap:8px;font-weight:600;margin:6px 0}
+.check input{width:18px;height:18px;accent-color:var(--theme)}
+
+/* list */
+.list-head{display:flex;align-items:baseline;justify-content:space-between;margin:4px 2px 12px}
+.list-head h1{margin:0;font-size:22px}
+.search-row{display:flex;gap:8px}
+.search-row .sort{width:auto;flex:none}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.char-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.char-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
+.char-card:active{transform:scale(.98)}
+.thumb{aspect-ratio:3/4;background:var(--soft) center 20%/cover no-repeat;display:grid;place-items:center;font-size:42px;font-weight:800;color:var(--theme-text)}
+.char-card .info{padding:10px 12px 12px;border-top:4px solid var(--theme)}
+.char-card .info b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.char-card .info span{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.new-card{border:2px dashed var(--soft2);background:transparent;display:grid;place-items:center;min-height:200px;color:var(--theme-text);font-weight:700;text-align:center;line-height:1.5}
+.new-card big{font-size:34px;font-weight:400}
+.empty-box{text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty-emoji{font-size:44px;color:var(--theme)}
+.banner{background:var(--soft);border-radius:14px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+/* detail sheet */
+.sheet{background:var(--bg);padding:18px;border-radius:24px}
+.hero{display:grid;gap:22px}
+.hero-img{max-width:340px;width:100%;margin:0 auto}
+.hero-img img{width:100%;height:auto;display:block;border-radius:22px;box-shadow:0 14px 34px -16px var(--theme)}
+.hero-info{text-align:center}
+.sub{margin:0 0 2px;font-weight:700;color:var(--theme-text);font-size:14px}
+.hero h1{margin:0;font-size:32px;line-height:1.25;letter-spacing:-.01em}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;justify-content:center}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--soft2);color:var(--theme-text);font-weight:700}
+.quote{margin:16px 0;padding:12px 16px;background:var(--soft);border-left:4px solid var(--theme);border-radius:0 14px 14px 0;text-align:left;font-weight:500}
+.profile{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;margin:14px 0 0;font-size:14px;background:var(--surface);padding:14px 18px;border-radius:16px;border:1px solid var(--line);text-align:left}
+.profile dt{color:var(--theme-text);font-weight:700}
+.profile dd{margin:0}
+@media(min-width:720px){
+  .hero{grid-template-columns:300px 1fr;align-items:start}
+  .hero.noimg{grid-template-columns:1fr}
+  .hero-info{text-align:left}
+  .tags{justify-content:flex-start}
+}
+.sec{margin-top:30px}
+.sec h2{font-size:18px;margin:0 0 12px;display:flex;align-items:center;gap:9px}
+.bar{display:inline-block;width:6px;height:20px;border-radius:3px;background:var(--theme)}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;line-height:1.8}
+.rel-list{display:grid;gap:8px}
+@media(min-width:620px){.rel-list{grid-template-columns:1fr 1fr}}
+.rel{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.rel .txt{flex:1;min-width:0}
+.rel b{display:block;line-height:1.35}
+.rel span{font-size:13px;color:var(--muted);line-height:1.45;display:block}
+.rel .go{color:var(--theme-text);font-size:20px;font-weight:700}
+.avatar{width:50px;height:50px;border-radius:50%;flex:none;background:var(--soft) center 20%/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--theme-text);font-weight:800;font-size:18px}
+.motif-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;align-items:start}
+.motif{background:var(--surface);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.motif img{width:100%;height:auto;display:block}
+.motif .mt{padding:10px 12px}
+.motif b{display:block;line-height:1.35}
+.motif p{margin:3px 0 0;font-size:13px;color:var(--muted);line-height:1.5}
+.song{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.song-row{display:flex;align-items:center;gap:12px}
+.disc{width:46px;height:46px;border-radius:50%;flex:none;background:var(--theme);color:var(--on-theme);display:flex;align-items:center;justify-content:center;font-size:20px}
+.song .txt{flex:1;min-width:0}
+.song b{display:block;line-height:1.35}
+.song span{display:block;font-size:13px;color:var(--muted)}
+.song p{margin:8px 2px 0;font-size:14px}
+.song .listen{font-size:13px;font-weight:700;color:var(--theme-text);white-space:nowrap}
+.yt{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:12px;margin-top:10px;background:#000}
+.ward-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;align-items:start}
+.ward img{width:100%;height:auto;display:block;border-radius:14px}
+.ward p{font-size:13px;margin:6px 2px 0;color:var(--muted);line-height:1.45}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.pager a{flex:1;max-width:48%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-size:14px}
+.pager a small{display:block;color:var(--muted);font-size:12px}
+.pager a.next{text-align:right;margin-left:auto}
+.danger-row{display:flex;justify-content:center;gap:8px;margin-top:26px}
+
+/* edit */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+.edit-tools{position:sticky;top:65px;z-index:10;background:var(--bg-blur);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:8px 0;margin-top:-8px}
+.main-row{display:flex;gap:14px;align-items:flex-start;margin:10px 0 4px}
+.main-row .main-fields{flex:1;min-width:0}
+.item-edit{display:flex;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--bg);flex-wrap:wrap}
+.item-edit .fields{flex:1;min-width:170px;display:grid;gap:6px;align-content:start}
+.item-edit .two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.item-tools{display:flex;gap:4px;width:100%;justify-content:flex-end}
+.img-slot{width:84px;flex:none;border-radius:12px;border:2px dashed var(--soft2);background:var(--soft) center 20%/cover no-repeat;color:var(--theme-text);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;text-align:center}
+.img-slot.r1{aspect-ratio:1/1}
+.img-slot.r34{aspect-ratio:3/4}
+.img-slot.big{width:118px}
+.img-slot.has{border-style:solid;border-color:transparent}
+.img-slot.linked{cursor:default;font-size:24px}
+.img-x{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);background:#2b2935;color:#fff;font-size:12px;display:grid;place-items:center;padding:0}
+.kv{display:grid;grid-template-columns:minmax(80px,30%) 1fr auto;gap:6px;margin-bottom:6px;align-items:center}
+.color-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3px;background:var(--surface);border-radius:12px;cursor:pointer}
+.save-bottom{margin-top:18px}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(10,8,20,.5);display:flex;align-items:flex-end;justify-content:center;z-index:100;animation:fade .15s}
+.modal{position:relative;background:var(--surface);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom));animation:up .2s ease-out}
+@media(min-width:600px){.modal-bg{align-items:center}.modal{border-radius:24px}}
+.modal h3{margin:0 0 12px;font-size:19px;padding-right:36px}
+.modal-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:var(--bg);font-size:15px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.btn-col{display:grid;gap:8px}
+.swatches{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sw{width:34px;height:34px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.sw.on{box-shadow:0 0 0 2px var(--text)}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;min-height:160px;height:180px;line-height:1.4}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(30px);opacity:.5}}
+
+/* cropper */
+.ratio-row{display:flex;flex-wrap:wrap;gap:6px}
+.crop-stage{position:relative;overflow:hidden;margin:14px auto 10px;border-radius:12px;background:#111;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.crop-stage:active{cursor:grabbing}
+.crop-stage img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.crop-stage::before,.crop-stage::after{content:"";position:absolute;pointer-events:none;z-index:1}
+.crop-stage::before{top:0;bottom:0;left:33.333%;right:33.333%;border-left:1px solid rgba(255,255,255,.45);border-right:1px solid rgba(255,255,255,.45)}
+.crop-stage::after{left:0;right:0;top:33.333%;bottom:33.333%;border-top:1px solid rgba(255,255,255,.45);border-bottom:1px solid rgba(255,255,255,.45)}
+.zoom-row{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--muted)}
+.zoom-row input{flex:1;accent-color:var(--theme)}
+.png-preview{width:100%;border-radius:12px;border:1px solid var(--line);display:block;max-height:55vh;object-fit:contain;background:var(--bg)}
+
+/* group png (rendered offscreen) */
+.group-cap{position:absolute;left:-99999px;top:0;background:var(--bg);padding:48px 40px 44px;font-family:inherit}
+.gc-head{text-align:center;margin-bottom:28px}
+.gc-title{font-size:38px;font-weight:800;color:var(--theme-text);line-height:1.3}
+.gc-sub{font-size:18px;color:var(--muted);margin-top:4px}
+.gc-grid{display:grid;gap:18px}
+.gc-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.gc-thumb{height:0;padding-top:133.33%;position:relative;background:var(--soft) center 20%/cover no-repeat}
+.gc-thumb span{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:800;color:var(--theme-text)}
+.gc-info{padding:12px 14px 14px;border-top:5px solid var(--theme);text-align:center}
+.gc-info b{display:block;font-size:20px;line-height:1.35}
+.gc-info span{display:block;font-size:14px;color:var(--muted);line-height:1.4;margin-top:2px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1d1b26;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;transition:.2s;z-index:300;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="#/" class="brand" id="brand">자캐 아카이브</a>
+  <button class="icon-btn" id="settingsBtn" aria-label="설정">⚙︎</button>
+</header>
+<main id="app"></main>
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ---------- utils ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nl = s => esc(s).replace(/\n/g, '<br>');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clone = o => (typeof structuredClone === 'function' ? structuredClone(o) : JSON.parse(JSON.stringify(o)));
+const isHex = v => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);
+const safeImg = s => (typeof s === 'string' && (/^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=\s]+$/i.test(s) || /^https?:\/\/[^\s'"()<>]+$/i.test(s))) ? s : '';
+const safeUrl = s => (typeof s === 'string' && /^https?:\/\/[^\s"'<>]+$/i.test(s.trim())) ? s.trim() : '';
+const bgImg = src => src ? `background-image:url('${src}')` : '';
+const fmtSize = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + 'KB' : (n / 1048576).toFixed(1) + 'MB';
+const fmtDate = t => { const d = new Date(t); return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`; };
+const ytId = u => { const m = String(u || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/); return m ? m[1] : ''; };
+
+function hexToRgb(h){ h = h.replace('#',''); const n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function rgbToHex(r,g,b){ return '#' + [r,g,b].map(v => Math.round(v).toString(16).padStart(2,'0')).join(''); }
+function mix(a, b, t){ const A = hexToRgb(a), B = hexToRgb(b); return rgbToHex(...A.map((v,i) => v*t + B[i]*(1-t))); }
+function luminance(h){ const [r,g,b] = hexToRgb(h).map(v => { v /= 255; return v <= .03928 ? v/12.92 : ((v+.055)/1.055) ** 2.4; }); return .2126*r + .7152*g + .0722*b; }
+const onColor = h => luminance(h) > .42 ? '#1d1b26' : '#ffffff';
+function themeVars(color, dark){
+  const surface = dark ? '#1e1c26' : '#ffffff';
+  return {
+    '--theme': color, '--on-theme': onColor(color),
+    '--soft': mix(color, surface, dark ? .2 : .12),
+    '--soft2': mix(color, surface, dark ? .35 : .26),
+    '--theme-text': dark ? mix(color, '#ffffff', .7) : mix(color, '#000000', luminance(color) > .4 ? .55 : .8)
+  };
+}
+function applyVars(el, color){ const v = themeVars(color, state.settings.dark); for (const k in v) el.style.setProperty(k, v[k]); }
+
+function toast(msg, ms = 2000){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), ms); }
+function download(blob, name){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+function setPath(obj, path, val){ const k = path.split('.'); let o = obj; for (let i = 0; i < k.length - 1; i++) o = o[k[i]]; o[k[k.length-1]] = val; }
+function pickFile(accept){ return new Promise(res => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; i.onchange = () => res(i.files[0] || null); i.click(); }); }
+
+/* ---------- storage (IndexedDB, localStorage fallback) ---------- */
+const DB = {
+  db: null, fallback: false,
+  open(){ return new Promise((res, rej) => { const r = indexedDB.open('oc-archive', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => { this.db = r.result; res(); }; r.onerror = () => rej(r.error); }); },
+  get(k){ if (this.fallback) return Promise.resolve(JSON.parse(localStorage.getItem('oc-' + k) || 'null'));
+    return new Promise((res, rej) => { const q = this.db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); },
+  set(k, v){ if (this.fallback){ localStorage.setItem('oc-' + k, JSON.stringify(v)); return Promise.resolve(); }
+    return new Promise((res, rej) => { const tx = this.db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(v, k); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); }
+};
+
+/* ---------- state ---------- */
+const DEFAULT = { version: 1, settings: { title: '나의 자캐 아카이브', theme: '#8b7cf6', dark: false, sort: 'manual', lastBackup: 0 }, characters: [] };
+let state = clone(DEFAULT);
+let saveTimer = null;
+function save(){ clearTimeout(saveTimer); saveTimer = setTimeout(flush, 250); }
+async function flush(){ clearTimeout(saveTimer); saveTimer = null; try { await DB.set('state', state); } catch (e) { toast('저장 실패: 저장 공간이 부족할 수 있어요. 백업 후 사진을 줄여 주세요.', 4000); console.error(e); } }
+document.addEventListener('visibilitychange', () => { if (document.hidden && saveTimer) flush(); });
+
+function blankChar(){
+  return { id: uid(), name: '', subtitle: '', image: '', color: '', tags: [],
+    profile: [{k:'나이',v:''},{k:'키',v:''},{k:'생일',v:''}],
+    quote: '', story: '', relations: [], motifs: [], songs: [], wardrobe: [], created: Date.now(), updated: Date.now() };
+}
+function normalizeChar(c){
+  const b = blankChar(); c = (c && typeof c === 'object') ? c : {};
+  const str = v => typeof v === 'string' ? v : (v == null ? '' : String(v));
+  const arr = (v, f) => Array.isArray(v) ? v.filter(x => x && typeof x === 'object').map(f) : [];
+  return {
+    id: str(c.id) || b.id, name: str(c.name), subtitle: str(c.subtitle), image: safeImg(c.image),
+    color: isHex(c.color) ? c.color : '', tags: Array.isArray(c.tags) ? c.tags.map(str).filter(Boolean) : [],
+    profile: Array.isArray(c.profile) ? arr(c.profile, p => ({ k: str(p.k), v: str(p.v) })) : b.profile,
+    quote: str(c.quote), story: str(c.story),
+    relations: arr(c.relations, r => ({ id: str(r.id) || uid(), targetId: str(r.targetId), name: str(r.name), image: safeImg(r.image), relation: str(r.relation) })),
+    motifs: arr(c.motifs, m => ({ id: str(m.id) || uid(), name: str(m.name), image: safeImg(m.image), reason: str(m.reason) })),
+    songs: arr(c.songs, s => ({ id: str(s.id) || uid(), title: str(s.title), artist: str(s.artist), url: str(s.url), note: str(s.note) })),
+    wardrobe: arr(c.wardrobe, w => ({ id: str(w.id) || uid(), image: safeImg(w.image), caption: str(w.caption) })),
+    created: +c.created || Date.now(), updated: +c.updated || Date.now()
+  };
+}
+function normalizeState(s){
+  const d = clone(DEFAULT);
+  if (!s || typeof s !== 'object') return d;
+  const out = { version: 1, settings: { ...d.settings, ...(s.settings || {}) }, characters: (Array.isArray(s.characters) ? s.characters : []).map(normalizeChar) };
+  if (!isHex(out.settings.theme)) out.settings.theme = d.settings.theme;
+  out.settings.title = String(out.settings.title || d.settings.title);
+  return out;
+}
+const getChar = id => state.characters.find(c => c.id === id);
+const colorOf = c => (c && isHex(c.color)) ? c.color : state.settings.theme;
+function sortedChars(){
+  const a = [...state.characters], s = state.settings.sort;
+  if (s === 'name') a.sort((x, y) => x.name.localeCompare(y.name, 'ko'));
+  else if (s === 'updated') a.sort((x, y) => y.updated - x.updated);
+  return a;
+}
+
+function applyTheme(){
+  const s = state.settings;
+  document.documentElement.classList.toggle('dark', !!s.dark);
+  applyVars(document.documentElement, s.theme);
+  $('meta[name=theme-color]').content = s.dark ? '#14131a' : s.theme;
+  $('#brand').textContent = s.title;
+  document.title = s.title;
+}
+
+/* ---------- router ---------- */
+const app = $('#app');
+const ui = { q: '', tag: '', cid: null };
+let draft = null, dirty = false, isNew = false, suppress = false, currentHash = location.hash;
+
+function route(){
+  const p = (location.hash.slice(1) || '/').split('/').filter(Boolean).map(decodeURIComponent);
+  ui.cid = null;
+  if (p[0] === 'c' && p[1]) return renderDetail(p[1]);
+  if (p[0] === 'e' && p[1]) return renderEdit(p[1]);
+  if (p[0] === 'new') return renderEdit(null);
+  renderList();
+}
+window.addEventListener('hashchange', () => {
+  if (suppress){ suppress = false; return; }
+  if (draft && dirty && !confirm('저장하지 않은 변경사항이 있어요. 나갈까요?')){ suppress = true; location.hash = currentHash; return; }
+  draft = null; dirty = false; currentHash = location.hash;
+  route(); window.scrollTo(0, 0);
+});
+window.addEventListener('beforeunload', e => { if (draft && dirty){ e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- list ---------- */
+function renderList(){
+  const s = state.settings;
+  const days = s.lastBackup ? Math.floor((Date.now() - s.lastBackup) / 864e5) : null;
+  const needBackup = state.characters.length > 0 && (days === null || days >= 14);
+  app.innerHTML = `
+    ${needBackup ? `<div class="banner"><span>${days === null ? '아직 백업한 적이 없어요.' : `마지막 백업이 ${days}일 전이에요.`} 브라우저 데이터는 지워질 수 있으니 가끔 백업해 주세요.</span><button class="btn primary sm" data-act="backup">백업</button></div>` : ''}
+    ${state.characters.length ? `<div class="list-head"><h1>자캐 목록 <span class="muted" style="font-size:14px;font-weight:600">${state.characters.length}명</span></h1><button class="btn sm" data-act="group-png">단체 PNG</button></div>
+    <div class="search-row">
+      <input class="input" type="search" id="q" placeholder="이름 · 소개 · 태그 검색" value="${esc(ui.q)}">
+      <select class="input sort" id="sort"><option value="manual">등록순</option><option value="name">이름순</option><option value="updated">최근 수정순</option></select>
+    </div>
+    <div class="tag-row" id="tagRow"></div>` : ''}
+    <div id="grid"></div>`;
+  if (state.characters.length){
+    $('#sort').value = s.sort || 'manual';
+    $('#q').oninput = e => { ui.q = e.target.value; drawGrid(); };
+    $('#sort').onchange = e => { s.sort = e.target.value; save(); drawGrid(); };
+    drawTags();
+  }
+  drawGrid();
+}
+function drawTags(){
+  const tags = [...new Set(state.characters.flatMap(c => c.tags))].sort((a, b) => a.localeCompare(b, 'ko'));
+  if (ui.tag && !tags.includes(ui.tag)) ui.tag = '';
+  $('#tagRow').innerHTML = tags.length ? [`<button class="chip ${!ui.tag ? 'on' : ''}" data-act="tag" data-tag="">전체</button>`,
+    ...tags.map(t => `<button class="chip ${ui.tag === t ? 'on' : ''}" data-act="tag" data-tag="${esc(t)}">#${esc(t)}</button>`)].join('') : '';
+}
+function filteredChars(){
+  const q = ui.q.trim().toLowerCase();
+  return sortedChars().filter(c => (!ui.tag || c.tags.includes(ui.tag)) && (!q || [c.name, c.subtitle, ...c.tags].join(' ').toLowerCase().includes(q)));
+}
+function drawGrid(){
+  const g = $('#grid');
+  if (!state.characters.length){
+    g.className = '';
+    g.innerHTML = `<div class="empty-box"><div class="empty-emoji">✦</div><p>아직 등록된 자캐가 없어요.<br>첫 번째 아이를 소개해 주세요!</p>
+      <a class="btn primary" href="#/new">+ 새 자캐 만들기</a><button class="btn ghost" data-act="import">백업 파일 불러오기</button></div>`;
+    return;
+  }
+  const list = filteredChars();
+  g.className = 'grid';
+  g.innerHTML = `<a class="char-card new-card" href="#/new"><span><big>＋</big><br>새 자캐</span></a>`
+    + list.map(c => `<a class="char-card" href="#/c/${encodeURIComponent(c.id)}">
+        <div class="thumb" style="${bgImg(c.image)}">${c.image ? '' : esc((c.name || '?').slice(0, 1))}</div>
+        <div class="info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b><span>${esc(c.subtitle) || '&nbsp;'}</span></div></a>`).join('')
+    + (list.length ? '' : `<p class="muted" style="grid-column:1/-1">검색 결과가 없어요.</p>`);
+}
+
+/* ---------- detail ---------- */
+const sec = (title, body) => `<section class="sec"><h2><span class="bar"></span>${title}</h2>${body}</section>`;
+function relInfo(r){
+  const target = r.targetId ? getChar(r.targetId) : null;
+  return { target, name: target ? target.name : r.name, image: (target ? target.image : '') || r.image };
+}
+function renderDetail(id){
+  const c = getChar(id);
+  if (!c){ location.hash = '#/'; return; }
+  ui.cid = c.id;
+  const list = sortedChars(), idx = list.findIndex(x => x.id === c.id), prev = list[idx - 1], next = list[idx + 1];
+  const prof = c.profile.filter(p => p.v.trim());
+  const rels = c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim());
+  const motifs = c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim());
+  const songs = c.songs.filter(s => s.title.trim() || s.url.trim());
+  const ward = c.wardrobe.filter(w => w.image || w.caption.trim());
+
+  app.innerHTML = `<div id="scope">
+    <div class="toolbar">
+      <a class="btn ghost" href="#/">← 목록</a><div class="spacer"></div>
+      <button class="btn" data-act="png">PNG 저장</button>
+      <button class="btn" data-act="html">HTML 추출</button>
+      <a class="btn primary" href="#/e/${encodeURIComponent(c.id)}">수정</a>
+    </div>
+    <article class="sheet" id="capture">
+      <header class="hero ${c.image ? '' : 'noimg'}">
+        ${c.image ? `<div class="hero-img"><img src="${c.image}" alt=""></div>` : ''}
+        <div class="hero-info">
+          ${c.subtitle ? `<p class="sub">${esc(c.subtitle)}</p>` : ''}
+          <h1>${esc(c.name)}</h1>
+          ${c.tags.length ? `<div class="tags">${c.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
+          ${c.quote.trim() ? `<blockquote class="quote">“${esc(c.quote)}”</blockquote>` : ''}
+          ${prof.length ? `<dl class="profile">${prof.map(p => `<dt>${esc(p.k)}</dt><dd>${esc(p.v)}</dd>`).join('')}</dl>` : ''}
+        </div>
+      </header>
+      ${c.story.trim() ? sec('서사', `<div class="story">${nl(c.story)}</div>`) : ''}
+      ${rels.length ? sec('인간관계', `<div class="rel-list">${rels.map(r => {
+        const { target, name, image } = relInfo(r);
+        const inner = `<div class="avatar" style="${bgImg(image)}">${image ? '' : esc((name || '?').slice(0, 1))}</div>
+          <div class="txt"><b>${esc(name || '이름 없음')}</b><span>${esc(r.relation)}</span></div>`;
+        return target ? `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>` : `<div class="rel">${inner}</div>`;
+      }).join('')}</div>`) : ''}
+      ${motifs.length ? sec('모티브', `<div class="motif-grid">${motifs.map(m => `<div class="motif">
+        ${m.image ? `<img src="${m.image}" alt="">` : ''}<div class="mt"><b>${esc(m.name)}</b>${m.reason.trim() ? `<p>${esc(m.reason)}</p>` : ''}</div></div>`).join('')}</div>`) : ''}
+      ${songs.length ? sec('테마곡', songs.map(s => {
+        const url = safeUrl(s.url), yt = ytId(url);
+        return `<div class="song"><div class="song-row"><div class="disc">♪</div>
+          <div class="txt"><b>${esc(s.title || '제목 없음')}</b>${s.artist.trim() ? `<span>${esc(s.artist)}</span>` : ''}</div>
+          ${url ? `<a class="listen" href="${esc(url)}" target="_blank" rel="noopener">듣기 ↗</a>` : ''}</div>
+          ${s.note.trim() ? `<p>${esc(s.note)}</p>` : ''}
+          ${yt ? `<iframe class="yt no-capture" src="https://www.youtube.com/embed/${yt}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>` : ''}</div>`;
+      }).join('')) : ''}
+      ${ward.length ? sec('옷장', `<div class="ward-grid">${ward.map(w => `<div class="ward">${w.image ? `<img src="${w.image}" alt="">` : ''}${w.caption.trim() ? `<p>${esc(w.caption)}</p>` : ''}</div>`).join('')}</div>`) : ''}
+    </article>
+    <nav class="pager">
+      ${prev ? `<a href="#/c/${encodeURIComponent(prev.id)}"><small>← 이전</small>${esc(prev.name)}</a>` : ''}
+      ${next ? `<a class="next" href="#/c/${encodeURIComponent(next.id)}"><small>다음 →</small>${esc(next.name)}</a>` : ''}
+    </nav>
+    <div class="danger-row"><button class="btn sm" data-act="dup">복제하기</button><button class="btn danger sm" data-act="del-char">삭제하기</button></div>
+  </div>`;
+  applyVars($('#scope'), colorOf(c));
+}
+
+/* ---------- edit ---------- */
+const SECTIONS = {
+  profile:   { label: '항목 추가',   blank: () => ({ k: '', v: '' }) },
+  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', image: '', relation: '' }), ratio: '1:1' },
+  motifs:    { label: '모티브 추가', blank: () => ({ id: uid(), name: '', image: '', reason: '' }), ratio: '1:1' },
+  songs:     { label: '테마곡 추가', blank: () => ({ id: uid(), title: '', artist: '', url: '', note: '' }) },
+  wardrobe:  { label: '옷 추가',     blank: () => ({ id: uid(), image: '', caption: '' }), ratio: '3:4' }
+};
+const slot = (sec, i, src, cls) => `<div class="img-slot ${cls} ${src ? 'has' : ''}" role="button" tabindex="0" data-act="pick" data-sec="${sec}" data-i="${i}" style="${bgImg(src)}">${src
+  ? `<button class="img-x" data-act="clear-img" data-sec="${sec}" data-i="${i}" aria-label="사진 삭제">✕</button>` : '<span>＋ 사진</span>'}</div>`;
+
+function itemFields(sec, it, i){
+  const p = `${sec}.${i}.`;
+  const inp = (key, ph, type = 'text') => `<input class="input" type="${type}" data-bind="${p}${key}" value="${esc(it[key])}" placeholder="${ph}">`;
+  if (sec === 'relations'){
+    const others = state.characters.filter(c => c.id !== draft.id);
+    const target = it.targetId ? getChar(it.targetId) : null;
+    return `${target ? `<div class="img-slot r1 has linked" style="${bgImg(target.image)}">${target.image ? '' : '🔗'}</div>` : slot(sec, i, it.image, 'r1')}
+      <div class="fields">
+        ${others.length ? `<select class="input" data-bind="${p}targetId" data-rerender="relations">
+          <option value="">직접 입력 (다른 사람 캐릭터 등)</option>
+          ${others.map(o => `<option value="${esc(o.id)}" ${o.id === it.targetId ? 'selected' : ''}>내 자캐: ${esc(o.name || '이름 없음')}</option>`).join('')}</select>` : ''}
+        ${target ? '' : inp('name', '상대 이름')}
+        ${inp('relation', '한 줄 관계 (예: 소꿉친구. 서로 못 잡아먹어 안달)')}
+      </div>`;
+  }
+  if (sec === 'motifs') return `${slot(sec, i, it.image, 'r1')}<div class="fields">${inp('name', '모티브 (인물·동물·작품·물건 등)')}${inp('reason', '닮은 점 한 줄')}</div>`;
+  if (sec === 'songs') return `<div class="fields"><div class="two">${inp('title', '곡 제목')}${inp('artist', '아티스트')}</div>${inp('url', '링크 (유튜브면 바로 재생)', 'url')}${inp('note', '왜 이 곡인지 한 줄')}</div>`;
+  if (sec === 'wardrobe') return `${slot(sec, i, it.image, 'r34')}<div class="fields">${inp('caption', '메모 (예: 외출복, 겨울 코디)')}</div>`;
+  return '';
+}
+function editList(sec){
+  const arr = draft[sec], add = `<button class="btn add" data-act="add" data-sec="${sec}">＋ ${SECTIONS[sec].label}</button>`;
+  if (sec === 'profile') return arr.map((p, i) => `<div class="kv">
+      <input class="input" data-bind="profile.${i}.k" value="${esc(p.k)}" placeholder="항목">
+      <input class="input" data-bind="profile.${i}.v" value="${esc(p.v)}" placeholder="내용">
+      <button class="mini danger" data-act="del" data-sec="profile" data-i="${i}" aria-label="삭제">✕</button></div>`).join('') + add;
+  return arr.map((it, i) => `<div class="item-edit">${itemFields(sec, it, i)}<div class="item-tools">
+      <button class="mini" data-act="move" data-sec="${sec}" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>↑</button>
+      <button class="mini" data-act="move" data-sec="${sec}" data-i="${i}" data-d="1" ${i === arr.length - 1 ? 'disabled' : ''}>↓</button>
+      <button class="mini danger" data-act="del" data-sec="${sec}" data-i="${i}">삭제</button></div></div>`).join('') + add;
+}
+const rerender = s => { const el = $('#sec-' + s); if (el) el.innerHTML = editList(s); };
+const mainImg = () => slot('main', 0, draft.image, 'r34 big');
+
+function renderEdit(id){
+  if (id){ const c = getChar(id); if (!c){ location.hash = '#/'; return; } draft = clone(c); isNew = false; }
+  else { draft = blankChar(); isNew = true; }
+  dirty = false;
+  const card = (title, hint, body) => `<section class="card"><h2><span class="bar"></span>${title}</h2>${hint ? `<p class="hint">${hint}</p>` : ''}${body}</section>`;
+  app.innerHTML = `<div id="scope">
+    <div class="toolbar edit-tools">
+      <button class="btn ghost" data-act="cancel">← 취소</button>
+      <b class="tb-title">${isNew ? '새 자캐 만들기' : '수정 중'}</b><div class="spacer"></div>
+      <button class="btn primary" data-act="save">저장</button>
+    </div>
+    ${card('기본 정보', '', `
+      <div class="main-row"><div id="main-img">${mainImg()}</div>
+        <div class="main-fields">
+          <label class="field"><span>이름 *</span><input class="input" data-bind="name" value="${esc(draft.name)}" placeholder="캐릭터 이름"></label>
+          <label class="field"><span>한 줄 소개</span><input class="input" data-bind="subtitle" value="${esc(draft.subtitle)}" placeholder="예: 비 오는 날만 웃는 탐정"></label>
+        </div></div>
+      <label class="field"><span>대표 대사</span><input class="input" data-bind="quote" value="${esc(draft.quote)}" placeholder="이 아이를 한마디로 보여주는 대사"></label>
+      <label class="field"><span>태그 (쉼표로 구분)</span><input class="input" data-kind="tags" value="${esc(draft.tags.join(', '))}" placeholder="예: 판타지, 메인, 오너캐"></label>
+      <div class="field"><span>캐릭터 색 (이 아이 페이지에만 적용)</span>
+        <div class="color-row"><input type="color" id="cColor" value="${colorOf(draft)}"><span class="muted" id="cColorLabel">${draft.color || '사이트 테마 색 사용 중'}</span>
+        <button class="btn sm ghost" data-act="color-reset">테마 색으로</button></div></div>`)}
+    ${card('프로필 항목', '나이, 키, 생일, 종족, MBTI… 자유롭게 추가하세요.', `<div id="sec-profile">${editList('profile')}</div>`)}
+    ${card('서사', '', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
+    ${card('인간관계', '상대와 무슨 관계인지 한 줄로. 내 자캐를 고르면 서로 페이지로 이동할 수 있어요.', `<div id="sec-relations">${editList('relations')}</div>`)}
+    ${card('모티브', '모티브가 된 대상과, 어디가 닮았는지 한 줄로.', `<div id="sec-motifs">${editList('motifs')}</div>`)}
+    ${card('테마곡', '유튜브 링크를 넣으면 페이지에서 바로 재생돼요.', `<div id="sec-songs">${editList('songs')}</div>`)}
+    ${card('옷장', '이 아이가 입을 법한 옷 사진을 모아두세요.', `<div id="sec-wardrobe">${editList('wardrobe')}</div>`)}
+    <div class="save-bottom"><button class="btn primary big" data-act="save">저장하기</button></div>
+  </div>`;
+  applyVars($('#scope'), colorOf(draft));
+  $('#cColor').oninput = e => { draft.color = e.target.value; dirty = true; $('#cColorLabel').textContent = draft.color; applyVars($('#scope'), draft.color); };
+}
+function saveDraft(){
+  draft.name = draft.name.trim();
+  if (!draft.name){ toast('이름을 입력해 주세요'); const n = $('[data-bind="name"]'); n && n.focus(); return; }
+  draft.updated = Date.now();
+  const i = state.characters.findIndex(c => c.id === draft.id);
+  if (i >= 0) state.characters[i] = draft; else state.characters.push(draft);
+  save(); dirty = false; toast('저장했어요');
+  location.hash = '#/c/' + encodeURIComponent(draft.id);
+}
+
+/* ---------- events ---------- */
+app.addEventListener('input', e => {
+  if (!draft) return;
+  const t = e.target;
+  if (t.dataset.kind === 'tags'){ draft.tags = [...new Set(t.value.split(/[,，#]/).map(s => s.trim()).filter(Boolean))]; dirty = true; return; }
+  const b = t.dataset.bind; if (!b) return;
+  setPath(draft, b, t.value); dirty = true;
+  if (t.dataset.rerender) rerender(t.dataset.rerender);
+});
+app.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('img-slot')){ e.preventDefault(); e.target.click(); } });
+app.addEventListener('click', async e => {
+  const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
+  const act = t.dataset.act, s = t.dataset.sec, i = +t.dataset.i;
+  switch (act){
+    case 'tag': ui.tag = t.dataset.tag; drawTags(); drawGrid(); break;
+    case 'backup': exportJson(); renderList(); break;
+    case 'import': importJson(); break;
+    case 'png': savePng(getChar(ui.cid)); break;
+    case 'group-png': groupPng(); break;
+    case 'html': openExport(getChar(ui.cid)); break;
+    case 'dup': duplicateChar(getChar(ui.cid)); break;
+    case 'del-char': deleteChar(ui.cid); break;
+    case 'cancel': location.hash = isNew ? '#/' : '#/c/' + encodeURIComponent(draft.id); break;
+    case 'save': saveDraft(); break;
+    case 'add': {
+      draft[s].push(SECTIONS[s].blank()); dirty = true; rerender(s);
+      const items = $('#sec-' + s).querySelectorAll('.item-edit, .kv'); const last = items[items.length - 1];
+      const f = last && last.querySelector('input:not([type=hidden])'); f && f.focus(); break;
+    }
+    case 'del': {
+      const it = draft[s][i];
+      const hasContent = Object.entries(it).some(([k, v]) => k !== 'id' && String(v).trim());
+      if (s !== 'profile' && hasContent && !confirm('이 항목을 삭제할까요?')) return;
+      draft[s].splice(i, 1); dirty = true; rerender(s); break;
+    }
+    case 'move': { const a = draft[s], j = i + (+t.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; dirty = true; rerender(s); break; }
+    case 'pick': {
+      const d = draft, src = await pickImage(s === 'main' ? '3:4' : SECTIONS[s].ratio);
+      if (!src || d !== draft) return;
+      if (s === 'main'){ draft.image = src; $('#main-img').innerHTML = mainImg(); }
+      else if (draft[s][i]){ draft[s][i].image = src; rerender(s); }
+      dirty = true; break;
+    }
+    case 'clear-img':
+      if (s === 'main'){ draft.image = ''; $('#main-img').innerHTML = mainImg(); } else { draft[s][i].image = ''; rerender(s); }
+      dirty = true; break;
+    case 'color-reset':
+      draft.color = ''; dirty = true; $('#cColor').value = state.settings.theme;
+      $('#cColorLabel').textContent = '사이트 테마 색 사용 중'; applyVars($('#scope'), state.settings.theme); break;
+  }
+});
+$('#settingsBtn').onclick = openSettings;
+
+function duplicateChar(c){
+  const n = clone(c); n.id = uid(); n.name = c.name + ' (복사본)'; n.created = n.updated = Date.now();
+  ['relations', 'motifs', 'songs', 'wardrobe'].forEach(k => n[k].forEach(it => it.id = uid()));
+  state.characters.push(n); save(); toast('복제했어요'); location.hash = '#/e/' + encodeURIComponent(n.id);
+}
+function deleteChar(id){
+  const c = getChar(id); if (!c) return;
+  if (!confirm(`'${c.name}'을(를) 삭제할까요? 되돌릴 수 없어요.`)) return;
+  state.characters = state.characters.filter(x => x.id !== id);
+  state.characters.forEach(o => o.relations.forEach(r => { if (r.targetId === id){ r.targetId = ''; r.name = r.name || c.name; r.image = r.image || c.image; } }));
+  save(); toast('삭제했어요'); location.hash = '#/';
+}
+
+/* ---------- modal ---------- */
+function openModal(html, onClose){
+  const wrap = document.createElement('div'); wrap.className = 'modal-bg';
+  wrap.innerHTML = `<div class="modal" role="dialog"><button class="modal-x" data-x="close" aria-label="닫기">✕</button>${html}</div>`;
+  $('#modal-root').append(wrap); document.body.style.overflow = 'hidden';
+  let closed = false;
+  const close = () => { if (closed) return; closed = true; wrap.remove(); if (!$('#modal-root').children.length) document.body.style.overflow = ''; onClose && onClose(); };
+  wrap.addEventListener('pointerdown', e => { wrap._down = e.target === wrap; });
+  wrap.addEventListener('click', e => { if (e.target === wrap && wrap._down) close(); if (e.target.closest('[data-x="close"]')) close(); });
+  return { el: wrap.firstElementChild, close };
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ const m = $('#modal-root').lastElementChild; m && m.querySelector('[data-x="close"]').click(); } });
+
+/* ---------- image cropper ---------- */
+async function pickImage(ratio){
+  const f = await pickFile('image/*'); if (!f) return null;
+  const url = URL.createObjectURL(f);
+  const img = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = url; });
+  if (!img){ URL.revokeObjectURL(url); toast('이미지를 읽을 수 없어요'); return null; }
+  const out = await openCropper(img, ratio, /png|webp|gif/.test(f.type));
+  URL.revokeObjectURL(url); return out;
+}
+function openCropper(img, ratio, transparent){
+  return new Promise(resolve => {
+    let result = null;
+    const ratios = ['1:1', '3:4', '4:3', '9:16', '16:9', '원본'];
+    const m = openModal(`<h3>사진 자르기</h3>
+      <div class="ratio-row">${ratios.map(r => `<button class="chip" data-r="${r}">${r}</button>`).join('')}</div>
+      <div class="crop-stage"><img draggable="false" alt=""></div>
+      <div class="zoom-row"><span>−</span><input type="range" min="1" max="5" step="0.01" value="1" aria-label="확대"><span>＋</span></div>
+      <p class="hint" style="text-align:center">드래그로 위치 이동 · 슬라이더 / 두 손가락 / 휠로 확대</p>
+      <div class="modal-actions"><button class="btn ghost" data-x="close">취소</button><button class="btn primary" data-ok>완료</button></div>`, () => resolve(result));
+    const stage = $('.crop-stage', m.el), im = $('img', stage), slider = $('input[type=range]', m.el);
+    im.src = img.src;
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    let W, H, base, zoom = 1, scale, x = 0, y = 0, cur = ratio;
+    function setup(){
+      const [rw, rh] = cur === '원본' ? [nw, nh] : cur.split(':').map(Number);
+      const avail = stage.parentElement.clientWidth - 40, maxH = window.innerHeight * .5;
+      W = avail; H = W * rh / rw; if (H > maxH){ H = maxH; W = H * rw / rh; }
+      stage.style.width = W + 'px'; stage.style.height = H + 'px';
+      base = Math.max(W / nw, H / nh); zoom = 1; slider.value = 1; scale = base;
+      x = (W - nw * scale) / 2; y = (H - nh * scale) / 2; apply();
+      m.el.querySelectorAll('[data-r]').forEach(b => b.classList.toggle('on', b.dataset.r === cur));
+    }
+    function apply(){
+      const dw = nw * scale, dh = nh * scale;
+      x = Math.min(0, Math.max(W - dw, x)); y = Math.min(0, Math.max(H - dh, y));
+      im.style.width = dw + 'px'; im.style.height = dh + 'px'; im.style.transform = `translate(${x}px,${y}px)`;
+    }
+    function zoomTo(z, cx = W / 2, cy = H / 2){
+      z = Math.max(1, Math.min(5, z)); const ns = base * z;
+      const px = (cx - x) / scale, py = (cy - y) / scale;
+      scale = ns; zoom = z; x = cx - px * ns; y = cy - py * ns; slider.value = z; apply();
+    }
+    const pts = new Map(); let lastDist = 0;
+    const pinch = () => { const [a, b] = [...pts.values()]; return [Math.hypot(a.x - b.x, a.y - b.y), { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }]; };
+    stage.addEventListener('pointerdown', e => { stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); if (pts.size === 2) lastDist = pinch()[0]; });
+    stage.addEventListener('pointermove', e => {
+      const p = pts.get(e.pointerId); if (!p) return;
+      if (pts.size === 1){ x += e.clientX - p.x; y += e.clientY - p.y; p.x = e.clientX; p.y = e.clientY; apply(); }
+      else { p.x = e.clientX; p.y = e.clientY; const [d, mid] = pinch(), r = stage.getBoundingClientRect(); if (lastDist) zoomTo(zoom * d / lastDist, mid.x - r.left, mid.y - r.top); lastDist = d; }
+    });
+    const up = e => { pts.delete(e.pointerId); lastDist = pts.size === 2 ? pinch()[0] : 0; };
+    stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+    stage.addEventListener('wheel', e => { e.preventDefault(); const r = stage.getBoundingClientRect(); zoomTo(zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1), e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+    slider.addEventListener('input', () => zoomTo(+slider.value));
+    m.el.addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (b){ cur = b.dataset.r; setup(); } });
+    $('[data-ok]', m.el).onclick = () => {
+      const srcW = W / scale, srcH = H / scale;
+      let OW, OH; const LONG = 1100;
+      if (W >= H){ OW = LONG; OH = Math.round(LONG * H / W); } else { OH = LONG; OW = Math.round(LONG * W / H); }
+      if (srcW < OW){ const f = srcW / OW; OW = Math.round(OW * f); OH = Math.round(OH * f); }
+      const cv = document.createElement('canvas'); cv.width = OW; cv.height = OH;
+      const ctx = cv.getContext('2d'); ctx.imageSmoothingQuality = 'high';
+      if (!transparent){ ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, OW, OH); }
+      ctx.drawImage(img, -x / scale, -y / scale, srcW, srcH, 0, 0, OW, OH);
+      result = transparent ? cv.toDataURL('image/webp', .9) : cv.toDataURL('image/jpeg', .88);
+      m.close();
+    };
+    requestAnimationFrame(setup);
+  });
+}
+
+/* ---------- PNG ---------- */
+function loadH2C(){
+  if (window.html2canvas) return Promise.resolve();
+  return new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'; s.onload = res; s.onerror = rej; document.head.append(s); });
+}
+async function capturePng(el, fileName, maxScale = 2){
+  toast('이미지 만드는 중…', 8000);
+  try { await loadH2C(); } catch { toast('PNG 모듈을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'); return false; }
+  try {
+    const w = el.offsetWidth, h = el.offsetHeight, scale = Math.min(maxScale, Math.sqrt(15e6 / (w * h)));
+    const canvas = await html2canvas(el, { scale, useCORS: true, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(),
+      ignoreElements: n => n.classList && n.classList.contains('no-capture') });
+    const dataUrl = canvas.toDataURL('image/png'); toast('완성!');
+    const m = openModal(`<h3>PNG 저장</h3><img class="png-preview" src="${dataUrl}" alt="">
+      <p class="hint">모바일에서 저장이 안 되면 이미지를 길게 눌러 저장하세요.</p>
+      <div class="modal-actions"><button class="btn primary" data-dl>⬇ 다운로드</button></div>`);
+    $('[data-dl]', m.el).onclick = () => canvas.toBlob(b => download(b, fileName), 'image/png');
+    return true;
+  } catch (err){ console.error(err); toast('이미지 생성에 실패했어요'); return false; }
+}
+async function savePng(c){
+  const el = $('#capture'); if (!el || !c) return;
+  await capturePng(el, `${c.name || 'character'}.png`);
+}
+async function groupPng(){
+  const list = filteredChars();
+  if (!list.length){ toast('담을 자캐가 없어요'); return; }
+  const n = list.length, cols = n <= 2 ? n : n <= 6 ? 3 : n <= 16 ? 4 : 5;
+  const W = cols <= 2 ? 720 : 1080;
+  const box = document.createElement('div');
+  box.className = 'group-cap';
+  box.style.width = W + 'px';
+  box.innerHTML = `<div class="gc-head"><div class="gc-title">${esc(state.settings.title)}</div>
+      <div class="gc-sub">${ui.tag ? '#' + esc(ui.tag) + ' · ' : ''}${n}명</div></div>
+    <div class="gc-grid" style="grid-template-columns:repeat(${cols},1fr)">${list.map(c => `<div class="gc-card">
+      <div class="gc-thumb" style="${bgImg(c.image)}">${c.image ? '' : `<span>${esc((c.name || '?').slice(0, 1))}</span>`}</div>
+      <div class="gc-info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b>${c.subtitle ? `<span>${esc(c.subtitle)}</span>` : ''}</div></div>`).join('')}</div>`;
+  window.scrollTo(0, 0);
+  document.body.append(box);
+  await capturePng(box, `${state.settings.title || '자캐'}-단체.png`, 1.5);
+  box.remove();
+}
+
+/* ---------- HTML export (Tistory) ---------- */
+function buildExportHtml(c, withImg){
+  const t = colorOf(c), on = onColor(t), soft = mix(t, '#ffffff', .12), soft2 = mix(t, '#ffffff', .26), tt = mix(t, '#000000', luminance(t) > .4 ? .55 : .8);
+  const I = src => { src = safeImg(src); return !src ? '' : (withImg ? src : 'IMAGE_URL'); };
+  const card = 'background:#ffffff;border:1px solid #ebe8f2;border-radius:16px;';
+  const H2 = s => `<h2 style="font-size:19px;margin:34px 0 12px;padding:0 0 0 12px;border-left:6px solid ${t};line-height:1.3;color:#1d1b26;">${s}</h2>`;
+  const prof = c.profile.filter(p => p.v.trim());
+  const rels = c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim());
+  const motifs = c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim());
+  const songs = c.songs.filter(s => s.title.trim() || s.url.trim());
+  const ward = c.wardrobe.filter(w => w.image || w.caption.trim());
+  let h = `<div style="max-width:720px;margin:0 auto;padding:22px;font-family:Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1d1b26;line-height:1.7;background:#faf9fc;border-radius:24px;word-break:keep-all;box-sizing:border-box;">`;
+  const img = I(c.image);
+  if (img) h += `<div style="text-align:center;"><img src="${img}" alt="${esc(c.name)}" style="max-width:320px;width:100%;height:auto;border-radius:22px;display:inline-block;"></div>`;
+  h += `<div style="text-align:center;margin-top:16px;">`;
+  if (c.subtitle) h += `<div style="color:${tt};font-weight:700;font-size:14px;">${esc(c.subtitle)}</div>`;
+  h += `<div style="font-size:30px;font-weight:800;line-height:1.3;">${esc(c.name)}</div>`;
+  if (c.tags.length) h += `<div style="margin-top:8px;">${c.tags.map(x => `<span style="display:inline-block;margin:2px;font-size:12px;padding:2px 10px;border-radius:999px;background:${soft2};color:${tt};font-weight:700;">#${esc(x)}</span>`).join('')}</div>`;
+  h += `</div>`;
+  if (c.quote.trim()) h += `<div style="margin:18px 0;padding:12px 16px;background:${soft};border-left:4px solid ${t};border-radius:0 14px 14px 0;">“${esc(c.quote)}”</div>`;
+  if (prof.length) h += `<table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;${card}overflow:hidden;font-size:14px;">${prof.map((p, i) => {
+    const bd = i < prof.length - 1 ? 'border-bottom:1px solid #f0edf5;' : '';
+    return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${esc(p.v)}</td></tr>`; }).join('')}</table>`;
+  if (c.story.trim()) h += H2('서사') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
+  if (rels.length) h += H2('인간관계') + rels.map(r => {
+    const { name, image } = relInfo(r), src = I(image);
+    const av = src ? `<img src="${src}" alt="" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center 20%;flex:none;">`
+      : `<div style="width:50px;height:50px;border-radius:50%;background:${soft};color:${tt};font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;">${esc((name || '?').slice(0, 1))}</div>`;
+    return `<div style="display:flex;align-items:center;gap:12px;${card}padding:10px 12px;margin-bottom:8px;">${av}<div><b>${esc(name)}</b><div style="color:#6b6880;font-size:14px;line-height:1.5;">${esc(r.relation)}</div></div></div>`;
+  }).join('');
+  if (motifs.length) h += H2('모티브') + `<div style="display:flex;flex-wrap:wrap;gap:12px;">${motifs.map(m => {
+    const src = I(m.image);
+    return `<div style="width:calc(50% - 6px);box-sizing:border-box;${card}overflow:hidden;">${src ? `<img src="${src}" alt="" style="width:100%;height:auto;display:block;">` : ''}<div style="padding:10px 12px;"><b>${esc(m.name)}</b>${m.reason.trim() ? `<div style="color:#6b6880;font-size:13px;line-height:1.5;margin-top:2px;">${esc(m.reason)}</div>` : ''}</div></div>`;
+  }).join('')}</div>`;
+  if (songs.length) h += H2('테마곡') + songs.map(s => {
+    const url = safeUrl(s.url), yt = ytId(url);
+    return `<div style="${card}padding:12px 14px;margin-bottom:10px;"><div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:44px;height:44px;border-radius:50%;background:${t};color:${on};display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;">♪</div>
+      <div style="flex:1;"><b>${esc(s.title)}</b>${s.artist.trim() ? `<div style="color:#6b6880;font-size:13px;">${esc(s.artist)}</div>` : ''}</div>
+      ${url && !yt ? `<a href="${esc(url)}" target="_blank" style="color:${tt};font-weight:700;font-size:13px;text-decoration:none;">듣기 ↗</a>` : ''}</div>
+      ${s.note.trim() ? `<div style="margin-top:8px;font-size:14px;">${esc(s.note)}</div>` : ''}
+      ${yt ? `<iframe src="https://www.youtube.com/embed/${yt}" width="100%" height="320" style="border:0;border-radius:12px;margin-top:10px;" allowfullscreen></iframe>` : ''}</div>`;
+  }).join('');
+  if (ward.length) h += H2('옷장') + `<div style="display:flex;flex-wrap:wrap;gap:10px;">${ward.map(w => {
+    const src = I(w.image);
+    return `<div style="width:calc(33.33% - 7px);min-width:140px;flex-grow:1;max-width:calc(50% - 5px);box-sizing:border-box;">${src ? `<img src="${src}" alt="" style="width:100%;height:auto;display:block;border-radius:14px;">` : ''}${w.caption.trim() ? `<div style="font-size:13px;color:#6b6880;margin-top:4px;">${esc(w.caption)}</div>` : ''}</div>`;
+  }).join('')}</div>`;
+  return h + `</div>`;
+}
+function openExport(c){
+  if (!c) return;
+  const m = openModal(`<h3>HTML 추출 (티스토리용)</h3>
+    <p class="hint">티스토리 글쓰기 → 오른쪽 위 <b>기본모드</b>를 <b>HTML</b>로 바꾼 뒤 붙여넣으세요.</p>
+    <label class="check"><input type="checkbox" id="xImg" checked> 사진을 코드 안에 포함하기</label>
+    <p class="hint" id="xInfo"></p>
+    <textarea class="input code" id="xCode" readonly></textarea>
+    <div class="modal-actions"><button class="btn" data-dl>.html 파일로 받기</button><button class="btn primary" data-copy>코드 복사</button></div>`);
+  const box = $('#xImg', m.el), code = $('#xCode', m.el);
+  const upd = () => {
+    code.value = buildExportHtml(c, box.checked);
+    $('#xInfo', m.el).innerHTML = `코드 크기: ${fmtSize(code.value.length)}` + (box.checked
+      ? (code.value.length > 2e6 ? ' · 너무 크면 티스토리 편집기가 느려질 수 있어요. 사진 미포함을 써 보세요.' : '')
+      : ' · 코드 속 <b>IMAGE_URL</b>을 티스토리에 올린 사진 주소로 바꿔 주세요.');
+  };
+  box.onchange = upd; upd();
+  $('[data-copy]', m.el).onclick = async () => {
+    try { await navigator.clipboard.writeText(code.value); } catch { code.removeAttribute('readonly'); code.select(); document.execCommand('copy'); code.setAttribute('readonly', ''); }
+    toast('복사했어요!');
+  };
+  $('[data-dl]', m.el).onclick = () => download(new Blob([`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(c.name)}</title></head><body style="margin:0;padding:16px;background:#f3f2f7;">${code.value}</body></html>`], { type: 'text/html' }), `${c.name || 'character'}.html`);
+}
+
+/* ---------- settings / backup ---------- */
+function exportJson(){
+  const d = new Date(), stamp = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  state.settings.lastBackup = Date.now(); save();
+  download(new Blob([JSON.stringify(state)], { type: 'application/json' }), `oc-archive-${stamp}.json`);
+  toast('백업 파일을 저장했어요');
+}
+async function importJson(){
+  const f = await pickFile('application/json,.json'); if (!f) return;
+  let obj;
+  try { obj = JSON.parse(await f.text()); } catch { toast('JSON 파일을 읽을 수 없어요'); return; }
+  const data = Array.isArray(obj) ? { characters: obj } : (obj && Array.isArray(obj.characters)) ? obj : (obj && obj.name !== undefined) ? { characters: [obj] } : null;
+  if (!data){ toast('자캐 아카이브 백업 파일이 아니에요'); return; }
+  const incoming = normalizeState({ settings: data.settings, characters: data.characters });
+  const m = openModal(`<h3>백업 불러오기</h3>
+    <p>파일 속 자캐 <b>${incoming.characters.length}명</b>을 불러올게요.</p>
+    <p class="hint"><b>합치기</b>: 지금 데이터는 두고 추가 (같은 캐릭터는 파일 내용으로 교체)<br><b>덮어쓰기</b>: 지금 데이터를 모두 지우고 파일 내용으로 바꿈</p>
+    <div class="modal-actions"><button class="btn danger" data-m="replace">덮어쓰기</button><button class="btn primary" data-m="merge">합치기</button></div>`);
+  m.el.addEventListener('click', e => {
+    const b = e.target.closest('[data-m]'); if (!b) return;
+    if (b.dataset.m === 'replace'){
+      if (!confirm('지금 데이터가 모두 사라져요. 계속할까요?')) return;
+      state = data.settings ? incoming : { ...incoming, settings: state.settings };
+    } else {
+      incoming.characters.forEach(c => { const i = state.characters.findIndex(x => x.id === c.id); if (i >= 0) state.characters[i] = c; else state.characters.push(c); });
+    }
+    save(); applyTheme(); m.close(); $('#modal-root').innerHTML = ''; document.body.style.overflow = '';
+    toast('불러왔어요!'); draft = null; dirty = false;
+    if (location.hash && location.hash !== '#/') location.hash = '#/'; else route();
+  });
+}
+function openSettings(){
+  const s = state.settings;
+  const presets = ['#8b7cf6', '#f472b6', '#fb7185', '#f59e0b', '#84cc16', '#14b8a6', '#3b82f6', '#64748b', '#2b2935'];
+  const m = openModal(`<h3>설정</h3>
+    <label class="field"><span>사이트 제목</span><input class="input" id="sTitle" value="${esc(s.title)}"></label>
+    <div class="field"><span>테마 색</span><div class="swatches">${presets.map(p => `<button class="sw ${p === s.theme ? 'on' : ''}" data-c="${p}" style="background:${p}" aria-label="${p}"></button>`).join('')}<input type="color" id="sColor" value="${s.theme}"></div></div>
+    <label class="check"><input type="checkbox" id="sDark" ${s.dark ? 'checked' : ''}> 다크 모드</label>
+    <hr>
+    <div class="field"><span>백업 · 복원</span>
+      <div class="btn-col"><button class="btn" data-s="export">⬇ JSON 백업 파일 저장</button><button class="btn" data-s="import">⬆ JSON 백업 불러오기</button></div>
+      <p class="hint">${s.lastBackup ? `마지막 백업: ${fmtDate(s.lastBackup)}` : '아직 백업 기록이 없어요.'} <span id="usage"></span><br>
+      데이터는 이 브라우저에만 저장돼요. 기기를 바꾸거나 브라우저 기록을 지우기 전에 꼭 백업하세요.</p></div>
+    <hr>
+    <button class="btn danger" data-s="reset">모든 데이터 삭제</button>`, () => route());
+  const setTheme = c => { s.theme = c; save(); applyTheme(); $('#sColor', m.el).value = c; m.el.querySelectorAll('.sw').forEach(b => b.classList.toggle('on', b.dataset.c === c)); };
+  $('#sTitle', m.el).oninput = e => { s.title = e.target.value || DEFAULT.settings.title; save(); applyTheme(); };
+  $('#sColor', m.el).oninput = e => setTheme(e.target.value);
+  $('#sDark', m.el).onchange = e => { s.dark = e.target.checked; save(); applyTheme(); };
+  m.el.addEventListener('click', e => {
+    const sw = e.target.closest('.sw'); if (sw) return setTheme(sw.dataset.c);
+    const b = e.target.closest('[data-s]'); if (!b) return;
+    if (b.dataset.s === 'export') exportJson();
+    if (b.dataset.s === 'import') importJson();
+    if (b.dataset.s === 'reset' && confirm('정말 모든 자캐 데이터를 지울까요? 되돌릴 수 없어요.\n(먼저 백업을 권장해요)')){
+      state = clone(DEFAULT); flush(); applyTheme(); m.close(); location.hash = '#/'; toast('모두 삭제했어요');
+    }
+  });
+  if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(est => { const u = $('#usage', m.el); if (u) u.textContent = `· 사용 중: ${fmtSize(est.usage || 0)}`; }).catch(() => {});
+}
+
+/* ---------- init ---------- */
+(async function init(){
+  try { await DB.open(); } catch (e){ console.warn('IndexedDB unavailable, using localStorage', e); DB.fallback = true; }
+  try { state = normalizeState(await DB.get('state')); } catch (e){ console.error(e); state = clone(DEFAULT); }
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+  applyTheme(); route();
+})();
+</script>
+</body>
+</html>
