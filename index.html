@@ -65,11 +65,23 @@ select.input{appearance:none;-webkit-appearance:none;background-image:linear-gra
 .search-row{display:flex;gap:8px}
 .search-row .sort{width:auto;flex:none}
 .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.filters{margin:12px 0 16px;display:grid;gap:8px}
+.filter-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-row .chip{flex:none}
+.filter-row .lbl{flex:none;font-size:12px;font-weight:700;color:var(--muted);align-self:center;margin-right:2px;min-width:30px}
+.list-btns{display:flex;gap:6px}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:7px 16px;border-radius:999px;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--theme);color:var(--on-theme)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;justify-content:center}
+.meta span{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--soft2);color:var(--theme-text);background:var(--surface)}
+@media(min-width:720px){.meta{justify-content:flex-start}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
 .char-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
 .char-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
 .char-card:active{transform:scale(.98)}
-.thumb{aspect-ratio:3/4;background:var(--soft) center 20%/cover no-repeat;display:grid;place-items:center;font-size:42px;font-weight:800;color:var(--theme-text)}
+.thumb{aspect-ratio:1/1;background:var(--soft) center 20%/cover no-repeat;display:grid;place-items:center;font-size:42px;font-weight:800;color:var(--theme-text)}
 .char-card .info{padding:10px 12px 12px;border-top:4px solid var(--theme)}
 .char-card .info b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .char-card .info span{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -191,7 +203,7 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 .gc-sub{font-size:18px;color:var(--muted);margin-top:4px}
 .gc-grid{display:grid;gap:18px}
 .gc-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden}
-.gc-thumb{height:0;padding-top:133.33%;position:relative;background:var(--soft) center 20%/cover no-repeat}
+.gc-thumb{height:0;padding-top:100%;position:relative;background:var(--soft) center 20%/cover no-repeat}
 .gc-thumb span{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:800;color:var(--theme-text)}
 .gc-info{padding:12px 14px 14px;border-top:5px solid var(--theme);text-align:center}
 .gc-info b{display:block;font-size:20px;line-height:1.35}
@@ -265,7 +277,7 @@ async function flush(){ clearTimeout(saveTimer); saveTimer = null; try { await D
 document.addEventListener('visibilitychange', () => { if (document.hidden && saveTimer) flush(); });
 
 function blankChar(){
-  return { id: uid(), name: '', subtitle: '', image: '', color: '', tags: [],
+  return { id: uid(), kind: 'oc', origin: '', name: '', subtitle: '', image: '', color: '', tags: [],
     profile: [{k:'나이',v:''},{k:'키',v:''},{k:'생일',v:''}],
     quote: '', story: '', relations: [], motifs: [], songs: [], wardrobe: [], created: Date.now(), updated: Date.now() };
 }
@@ -274,7 +286,7 @@ function normalizeChar(c){
   const str = v => typeof v === 'string' ? v : (v == null ? '' : String(v));
   const arr = (v, f) => Array.isArray(v) ? v.filter(x => x && typeof x === 'object').map(f) : [];
   return {
-    id: str(c.id) || b.id, name: str(c.name), subtitle: str(c.subtitle), image: safeImg(c.image),
+    id: str(c.id) || b.id, kind: c.kind === 'canon' ? 'canon' : 'oc', origin: str(c.origin).trim(), name: str(c.name), subtitle: str(c.subtitle), image: safeImg(c.image),
     color: isHex(c.color) ? c.color : '', tags: Array.isArray(c.tags) ? c.tags.map(str).filter(Boolean) : [],
     profile: Array.isArray(c.profile) ? arr(c.profile, p => ({ k: str(p.k), v: str(p.v) })) : b.profile,
     quote: str(c.quote), story: str(c.story),
@@ -294,6 +306,22 @@ function normalizeState(s){
   return out;
 }
 const getChar = id => state.characters.find(c => c.id === id);
+const KIND = { oc: '자캐', canon: '원작캐' };
+const NO_ORIGIN = '__none';
+const allOrigins = () => [...new Set(state.characters.map(c => c.origin.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko'));
+// 같은 원작(세계관) 캐릭터들이 쓰는 프로필 항목 이름 (등장 순서 유지)
+function originKeys(origin, excludeId){
+  origin = origin.trim(); if (!origin) return [];
+  const keys = [];
+  state.characters.filter(c => c.id !== excludeId && c.origin.trim() === origin)
+    .forEach(c => c.profile.forEach(p => { const k = p.k.trim(); if (k && !keys.includes(k)) keys.push(k); }));
+  return keys;
+}
+function addMissingKeys(profile, keys){
+  const have = new Set(profile.map(p => p.k.trim()).filter(Boolean)); let n = 0;
+  keys.forEach(k => { if (!have.has(k)){ profile.push({ k, v: '' }); have.add(k); n++; } });
+  return n;
+}
 const colorOf = c => (c && isHex(c.color)) ? c.color : state.settings.theme;
 function sortedChars(){
   const a = [...state.characters], s = state.settings.sort;
@@ -313,7 +341,7 @@ function applyTheme(){
 
 /* ---------- router ---------- */
 const app = $('#app');
-const ui = { q: '', tag: '', cid: null };
+const ui = { q: '', tag: '', kind: '', origin: '', cid: null };
 let draft = null, dirty = false, isNew = false, suppress = false, currentHash = location.hash;
 
 function route(){
@@ -339,45 +367,59 @@ function renderList(){
   const needBackup = state.characters.length > 0 && (days === null || days >= 14);
   app.innerHTML = `
     ${needBackup ? `<div class="banner"><span>${days === null ? '아직 백업한 적이 없어요.' : `마지막 백업이 ${days}일 전이에요.`} 브라우저 데이터는 지워질 수 있으니 가끔 백업해 주세요.</span><button class="btn primary sm" data-act="backup">백업</button></div>` : ''}
-    ${state.characters.length ? `<div class="list-head"><h1>자캐 목록 <span class="muted" style="font-size:14px;font-weight:600">${state.characters.length}명</span></h1><button class="btn sm" data-act="group-png">단체 PNG</button></div>
+    ${state.characters.length ? `<div class="list-head"><h1>캐릭터 목록 <span class="muted" style="font-size:14px;font-weight:600">${state.characters.length}명</span></h1><div class="list-btns"><button class="btn sm" data-act="list-html">HTML 추출</button><button class="btn sm" data-act="group-png">단체 PNG</button></div></div>
     <div class="search-row">
-      <input class="input" type="search" id="q" placeholder="이름 · 소개 · 태그 검색" value="${esc(ui.q)}">
+      <input class="input" type="search" id="q" placeholder="이름 · 원작 · 소개 · 태그 검색" value="${esc(ui.q)}">
       <select class="input sort" id="sort"><option value="manual">등록순</option><option value="name">이름순</option><option value="updated">최근 수정순</option></select>
     </div>
-    <div class="tag-row" id="tagRow"></div>` : ''}
+    <div class="filters" id="filters"></div>` : ''}
     <div id="grid"></div>`;
   if (state.characters.length){
     $('#sort').value = s.sort || 'manual';
     $('#q').oninput = e => { ui.q = e.target.value; drawGrid(); };
     $('#sort').onchange = e => { s.sort = e.target.value; save(); drawGrid(); };
-    drawTags();
+    drawFilters();
   }
   drawGrid();
 }
-function drawTags(){
-  const tags = [...new Set(state.characters.flatMap(c => c.tags))].sort((a, b) => a.localeCompare(b, 'ko'));
+function drawFilters(){
+  const cs = state.characters;
+  const origins = allOrigins(), hasNone = cs.some(c => !c.origin.trim()), hasCanon = cs.some(c => c.kind === 'canon');
+  const tags = [...new Set(cs.flatMap(c => c.tags))].sort((a, b) => a.localeCompare(b, 'ko'));
   if (ui.tag && !tags.includes(ui.tag)) ui.tag = '';
-  $('#tagRow').innerHTML = tags.length ? [`<button class="chip ${!ui.tag ? 'on' : ''}" data-act="tag" data-tag="">전체</button>`,
-    ...tags.map(t => `<button class="chip ${ui.tag === t ? 'on' : ''}" data-act="tag" data-tag="${esc(t)}">#${esc(t)}</button>`)].join('') : '';
+  if (ui.origin && ui.origin !== NO_ORIGIN && !origins.includes(ui.origin)) ui.origin = '';
+  if (!hasCanon) ui.kind = '';
+  const chip = (k, v, label) => `<button class="chip ${ui[k] === v ? 'on' : ''}" data-act="filter" data-k="${k}" data-v="${esc(v)}">${label}</button>`;
+  const row = (lbl, chips) => `<div class="filter-row"><span class="lbl">${lbl}</span>${chips.join('')}</div>`;
+  let h = '';
+  if (hasCanon) h += row('구분', [chip('kind', '', '전체'), chip('kind', 'oc', '자캐'), chip('kind', 'canon', '원작캐')]);
+  if (origins.length) h += row('원작', [chip('origin', '', '전체'), ...origins.map(o => chip('origin', o, esc(o))), ...(hasNone ? [chip('origin', NO_ORIGIN, '1차 창작')] : [])]);
+  if (tags.length) h += row('태그', [chip('tag', '', '전체'), ...tags.map(t => chip('tag', t, '#' + esc(t)))]);
+  $('#filters').innerHTML = h;
 }
 function filteredChars(){
   const q = ui.q.trim().toLowerCase();
-  return sortedChars().filter(c => (!ui.tag || c.tags.includes(ui.tag)) && (!q || [c.name, c.subtitle, ...c.tags].join(' ').toLowerCase().includes(q)));
+  return sortedChars().filter(c =>
+    (!ui.tag || c.tags.includes(ui.tag)) &&
+    (!ui.kind || c.kind === ui.kind) &&
+    (!ui.origin || (ui.origin === NO_ORIGIN ? !c.origin.trim() : c.origin.trim() === ui.origin)) &&
+    (!q || [c.name, c.origin, c.subtitle, ...c.tags].join(' ').toLowerCase().includes(q)));
 }
+const filterLabel = () => [ui.kind ? KIND[ui.kind] : '', ui.origin ? (ui.origin === NO_ORIGIN ? '1차 창작' : ui.origin) : '', ui.tag ? '#' + ui.tag : ''].filter(Boolean).join(' · ');
 function drawGrid(){
   const g = $('#grid');
   if (!state.characters.length){
     g.className = '';
-    g.innerHTML = `<div class="empty-box"><div class="empty-emoji">✦</div><p>아직 등록된 자캐가 없어요.<br>첫 번째 아이를 소개해 주세요!</p>
-      <a class="btn primary" href="#/new">+ 새 자캐 만들기</a><button class="btn ghost" data-act="import">백업 파일 불러오기</button></div>`;
+    g.innerHTML = `<div class="empty-box"><div class="empty-emoji">✦</div><p>아직 등록된 캐릭터가 없어요.<br>첫 번째 아이를 소개해 주세요!</p>
+      <a class="btn primary" href="#/new">+ 새 캐릭터 만들기</a><button class="btn ghost" data-act="import">백업 파일 불러오기</button></div>`;
     return;
   }
   const list = filteredChars();
   g.className = 'grid';
-  g.innerHTML = `<a class="char-card new-card" href="#/new"><span><big>＋</big><br>새 자캐</span></a>`
+  g.innerHTML = `<a class="char-card new-card" href="#/new"><span><big>＋</big><br>새 캐릭터</span></a>`
     + list.map(c => `<a class="char-card" href="#/c/${encodeURIComponent(c.id)}">
         <div class="thumb" style="${bgImg(c.image)}">${c.image ? '' : esc((c.name || '?').slice(0, 1))}</div>
-        <div class="info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b><span>${esc(c.subtitle) || '&nbsp;'}</span></div></a>`).join('')
+        <div class="info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b><span>${esc([c.kind === 'canon' ? '원작캐' : '', c.origin, c.subtitle].filter(Boolean).join(' · ')) || '&nbsp;'}</span></div></a>`).join('')
     + (list.length ? '' : `<p class="muted" style="grid-column:1/-1">검색 결과가 없어요.</p>`);
 }
 
@@ -394,9 +436,10 @@ function renderDetail(id){
   const list = sortedChars(), idx = list.findIndex(x => x.id === c.id), prev = list[idx - 1], next = list[idx + 1];
   const prof = c.profile.filter(p => p.v.trim());
   const rels = c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim());
-  const motifs = c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim());
-  const songs = c.songs.filter(s => s.title.trim() || s.url.trim());
-  const ward = c.wardrobe.filter(w => w.image || w.caption.trim());
+  const oc = c.kind !== 'canon';
+  const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
+  const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
+  const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
 
   app.innerHTML = `<div id="scope">
     <div class="toolbar">
@@ -409,6 +452,7 @@ function renderDetail(id){
       <header class="hero ${c.image ? '' : 'noimg'}">
         ${c.image ? `<div class="hero-img"><img src="${c.image}" alt=""></div>` : ''}
         <div class="hero-info">
+          <div class="meta"><span>${KIND[c.kind]}</span>${c.origin ? `<span>${esc(c.origin)}</span>` : ''}</div>
           ${c.subtitle ? `<p class="sub">${esc(c.subtitle)}</p>` : ''}
           <h1>${esc(c.name)}</h1>
           ${c.tags.length ? `<div class="tags">${c.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
@@ -464,8 +508,8 @@ function itemFields(sec, it, i){
     return `${target ? `<div class="img-slot r1 has linked" style="${bgImg(target.image)}">${target.image ? '' : '🔗'}</div>` : slot(sec, i, it.image, 'r1')}
       <div class="fields">
         ${others.length ? `<select class="input" data-bind="${p}targetId" data-rerender="relations">
-          <option value="">직접 입력 (다른 사람 캐릭터 등)</option>
-          ${others.map(o => `<option value="${esc(o.id)}" ${o.id === it.targetId ? 'selected' : ''}>내 자캐: ${esc(o.name || '이름 없음')}</option>`).join('')}</select>` : ''}
+          <option value="">직접 입력 (목록에 없는 캐릭터)</option>
+          ${others.map(o => `<option value="${esc(o.id)}" ${o.id === it.targetId ? 'selected' : ''}>목록: ${esc(o.name || '이름 없음')}${o.origin ? ` (${esc(o.origin)})` : ''}</option>`).join('')}</select>` : ''}
         ${target ? '' : inp('name', '상대 이름')}
         ${inp('relation', '한 줄 관계 (예: 소꿉친구. 서로 못 잡아먹어 안달)')}
       </div>`;
@@ -491,16 +535,24 @@ const mainImg = () => slot('main', 0, draft.image, 'r34 big');
 
 function renderEdit(id){
   if (id){ const c = getChar(id); if (!c){ location.hash = '#/'; return; } draft = clone(c); isNew = false; }
-  else { draft = blankChar(); isNew = true; }
+  else {
+    draft = blankChar(); isNew = true;
+    // 목록에서 원작/구분 필터를 고른 상태였다면 미리 채워줌
+    if (ui.kind) draft.kind = ui.kind;
+    if (ui.origin && ui.origin !== NO_ORIGIN){ draft.origin = ui.origin; const keys = originKeys(ui.origin, draft.id); if (keys.length) draft.profile = keys.map(k => ({ k, v: '' })); }
+  }
   dirty = false;
   const card = (title, hint, body) => `<section class="card"><h2><span class="bar"></span>${title}</h2>${hint ? `<p class="hint">${hint}</p>` : ''}${body}</section>`;
   app.innerHTML = `<div id="scope">
     <div class="toolbar edit-tools">
       <button class="btn ghost" data-act="cancel">← 취소</button>
-      <b class="tb-title">${isNew ? '새 자캐 만들기' : '수정 중'}</b><div class="spacer"></div>
+      <b class="tb-title">${isNew ? '새 캐릭터 만들기' : '수정 중'}</b><div class="spacer"></div>
       <button class="btn primary" data-act="save">저장</button>
     </div>
     ${card('기본 정보', '', `
+      <div class="field"><span>구분</span><div class="seg">${['oc', 'canon'].map(k => `<button type="button" class="${draft.kind === k ? 'on' : ''}" data-act="kind" data-v="${k}">${KIND[k]}</button>`).join('')}</div></div>
+      <label class="field"><span>원작 / 세계관 (1차 창작이면 비워두세요)</span><input class="input" id="originInput" data-bind="origin" list="originList" value="${esc(draft.origin)}" placeholder="예: 원신, 주술회전, 내 세계관 이름" autocomplete="off">
+        <datalist id="originList">${allOrigins().map(o => `<option value="${esc(o)}">`).join('')}</datalist></label>
       <div class="main-row"><div id="main-img">${mainImg()}</div>
         <div class="main-fields">
           <label class="field"><span>이름 *</span><input class="input" data-bind="name" value="${esc(draft.name)}" placeholder="캐릭터 이름"></label>
@@ -511,24 +563,38 @@ function renderEdit(id){
       <div class="field"><span>캐릭터 색 (이 아이 페이지에만 적용)</span>
         <div class="color-row"><input type="color" id="cColor" value="${colorOf(draft)}"><span class="muted" id="cColorLabel">${draft.color || '사이트 테마 색 사용 중'}</span>
         <button class="btn sm ghost" data-act="color-reset">테마 색으로</button></div></div>`)}
-    ${card('프로필 항목', '나이, 키, 생일, 종족, MBTI… 자유롭게 추가하세요.', `<div id="sec-profile">${editList('profile')}</div>`)}
+    ${card('프로필 항목', '나이, 키, 생일, 종족, MBTI… 자유롭게 추가하세요. 원작이 같은 캐릭터들은 항목이 자동으로 맞춰져요.', `<div id="sec-profile">${editList('profile')}</div>`)}
     ${card('서사', '', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
     ${card('인간관계', '상대와 무슨 관계인지 한 줄로. 내 자캐를 고르면 서로 페이지로 이동할 수 있어요.', `<div id="sec-relations">${editList('relations')}</div>`)}
+    <div id="oc-only" style="${draft.kind === 'canon' ? 'display:none' : ''}">
     ${card('모티브', '모티브가 된 대상과, 어디가 닮았는지 한 줄로.', `<div id="sec-motifs">${editList('motifs')}</div>`)}
     ${card('테마곡', '유튜브 링크를 넣으면 페이지에서 바로 재생돼요.', `<div id="sec-songs">${editList('songs')}</div>`)}
     ${card('옷장', '이 아이가 입을 법한 옷 사진을 모아두세요.', `<div id="sec-wardrobe">${editList('wardrobe')}</div>`)}
+    </div>
     <div class="save-bottom"><button class="btn primary big" data-act="save">저장하기</button></div>
   </div>`;
   applyVars($('#scope'), colorOf(draft));
+  $('#originInput').onchange = () => {
+    const o = draft.origin.trim(); if (!o) return;
+    const n = addMissingKeys(draft.profile, originKeys(o, draft.id));
+    if (n){ dirty = true; rerender('profile'); toast(`'${o}' 프로필 항목 ${n}개를 불러왔어요`); }
+  };
   $('#cColor').oninput = e => { draft.color = e.target.value; dirty = true; $('#cColorLabel').textContent = draft.color; applyVars($('#scope'), draft.color); };
 }
 function saveDraft(){
   draft.name = draft.name.trim();
   if (!draft.name){ toast('이름을 입력해 주세요'); const n = $('[data-bind="name"]'); n && n.focus(); return; }
+  draft.origin = draft.origin.trim();
   draft.updated = Date.now();
   const i = state.characters.findIndex(c => c.id === draft.id);
   if (i >= 0) state.characters[i] = draft; else state.characters.push(draft);
-  save(); dirty = false; toast('저장했어요');
+  // 같은 원작 캐릭터들에게 새 프로필 항목을 빈 칸으로 추가
+  let synced = 0;
+  if (draft.origin){
+    const keys = draft.profile.map(p => p.k.trim()).filter(Boolean);
+    state.characters.forEach(c => { if (c.id !== draft.id && c.origin.trim() === draft.origin && addMissingKeys(c.profile, keys)) synced++; });
+  }
+  save(); dirty = false; toast(synced ? `저장했어요 · 같은 원작 ${synced}명에게 항목을 추가했어요` : '저장했어요', synced ? 3000 : 2000);
   location.hash = '#/c/' + encodeURIComponent(draft.id);
 }
 
@@ -546,12 +612,14 @@ app.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
   const act = t.dataset.act, s = t.dataset.sec, i = +t.dataset.i;
   switch (act){
-    case 'tag': ui.tag = t.dataset.tag; drawTags(); drawGrid(); break;
+    case 'filter': ui[t.dataset.k] = ui[t.dataset.k] === t.dataset.v ? '' : t.dataset.v; drawFilters(); drawGrid(); break;
+    case 'list-html': { const l = filteredChars(); if (!l.length) return toast('담을 캐릭터가 없어요'); openExport({ title: state.settings.title, build: w => buildListExportHtml(l, w), file: state.settings.title || '캐릭터 목록' }); break; }
+    case 'kind': draft.kind = t.dataset.v; dirty = true; t.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === t)); $('#oc-only').style.display = draft.kind === 'canon' ? 'none' : ''; break;
     case 'backup': exportJson(); renderList(); break;
     case 'import': importJson(); break;
     case 'png': savePng(getChar(ui.cid)); break;
     case 'group-png': groupPng(); break;
-    case 'html': openExport(getChar(ui.cid)); break;
+    case 'html': { const c = getChar(ui.cid); if (c) openExport({ title: c.name, build: w => buildExportHtml(c, w), file: c.name || 'character' }); break; }
     case 'dup': duplicateChar(getChar(ui.cid)); break;
     case 'del-char': deleteChar(ui.cid); break;
     case 'cancel': location.hash = isNew ? '#/' : '#/c/' + encodeURIComponent(draft.id); break;
@@ -715,10 +783,10 @@ async function groupPng(){
   box.className = 'group-cap';
   box.style.width = W + 'px';
   box.innerHTML = `<div class="gc-head"><div class="gc-title">${esc(state.settings.title)}</div>
-      <div class="gc-sub">${ui.tag ? '#' + esc(ui.tag) + ' · ' : ''}${n}명</div></div>
+      <div class="gc-sub">${filterLabel() ? esc(filterLabel()) + ' · ' : ''}${n}명</div></div>
     <div class="gc-grid" style="grid-template-columns:repeat(${cols},1fr)">${list.map(c => `<div class="gc-card">
       <div class="gc-thumb" style="${bgImg(c.image)}">${c.image ? '' : `<span>${esc((c.name || '?').slice(0, 1))}</span>`}</div>
-      <div class="gc-info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b>${c.subtitle ? `<span>${esc(c.subtitle)}</span>` : ''}</div></div>`).join('')}</div>`;
+      <div class="gc-info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b>${(c.origin || c.subtitle) ? `<span>${esc([c.origin, c.subtitle].filter(Boolean).join(' · '))}</span>` : ''}</div></div>`).join('')}</div>`;
   window.scrollTo(0, 0);
   document.body.append(box);
   await capturePng(box, `${state.settings.title || '자캐'}-단체.png`, 1.5);
@@ -733,13 +801,15 @@ function buildExportHtml(c, withImg){
   const H2 = s => `<h2 style="font-size:19px;margin:34px 0 12px;padding:0 0 0 12px;border-left:6px solid ${t};line-height:1.3;color:#1d1b26;">${s}</h2>`;
   const prof = c.profile.filter(p => p.v.trim());
   const rels = c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim());
-  const motifs = c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim());
-  const songs = c.songs.filter(s => s.title.trim() || s.url.trim());
-  const ward = c.wardrobe.filter(w => w.image || w.caption.trim());
+  const oc = c.kind !== 'canon';
+  const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
+  const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
+  const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
   let h = `<div style="max-width:720px;margin:0 auto;padding:22px;font-family:Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1d1b26;line-height:1.7;background:#faf9fc;border-radius:24px;word-break:keep-all;box-sizing:border-box;">`;
   const img = I(c.image);
   if (img) h += `<div style="text-align:center;"><img src="${img}" alt="${esc(c.name)}" style="max-width:320px;width:100%;height:auto;border-radius:22px;display:inline-block;"></div>`;
   h += `<div style="text-align:center;margin-top:16px;">`;
+  h += `<div style="margin-bottom:4px;">${[KIND[c.kind], c.origin].filter(Boolean).map(x => `<span style="display:inline-block;margin:2px;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid ${soft2};color:${tt};background:#fff;">${esc(x)}</span>`).join('')}</div>`;
   if (c.subtitle) h += `<div style="color:${tt};font-weight:700;font-size:14px;">${esc(c.subtitle)}</div>`;
   h += `<div style="font-size:30px;font-weight:800;line-height:1.3;">${esc(c.name)}</div>`;
   if (c.tags.length) h += `<div style="margin-top:8px;">${c.tags.map(x => `<span style="display:inline-block;margin:2px;font-size:12px;padding:2px 10px;border-radius:999px;background:${soft2};color:${tt};font-weight:700;">#${esc(x)}</span>`).join('')}</div>`;
@@ -774,8 +844,25 @@ function buildExportHtml(c, withImg){
   }).join('')}</div>`;
   return h + `</div>`;
 }
-function openExport(c){
-  if (!c) return;
+function buildListExportHtml(list, withImg){
+  const t = state.settings.theme, tt = mix(t, '#000000', luminance(t) > .4 ? .55 : .8);
+  const I = src => { src = safeImg(src); return !src ? '' : (withImg ? src : 'IMAGE_URL'); };
+  const label = filterLabel();
+  let h = `<div id="oc-top" style="max-width:720px;margin:0 auto;font-family:Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1d1b26;line-height:1.6;word-break:keep-all;">
+<div style="text-align:center;padding:22px 0 16px;"><div style="font-size:28px;font-weight:800;color:${tt};">${esc(state.settings.title)}</div><div style="color:#6b6880;font-size:14px;">${label ? esc(label) + ' · ' : ''}${list.length}명</div></div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;">`;
+  h += list.map((c, i) => {
+    const src = I(c.image), col = colorOf(c);
+    const thumb = src ? `<img src="${src}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center 20%;display:block;">`
+      : `<div style="width:100%;aspect-ratio:1/1;background:${mix(col, '#ffffff', .12)};color:${mix(col, '#000000', .7)};font-size:36px;font-weight:800;display:flex;align-items:center;justify-content:center;">${esc((c.name || '?').slice(0, 1))}</div>`;
+    return `<a href="#oc-${i + 1}" style="width:calc(33.33% - 7px);min-width:120px;flex-grow:1;max-width:calc(50% - 5px);box-sizing:border-box;background:#fff;border:1px solid #ebe8f2;border-radius:16px;overflow:hidden;text-decoration:none;color:#1d1b26;">${thumb}
+<div style="padding:8px 10px 10px;border-top:4px solid ${col};text-align:center;"><b style="display:block;font-size:15px;">${esc(c.name)}</b><span style="font-size:12px;color:#6b6880;">${esc([c.origin, c.subtitle].filter(Boolean).join(' · ')) || '&nbsp;'}</span></div></a>`;
+  }).join('');
+  h += `</div>`;
+  h += list.map((c, i) => `<div id="oc-${i + 1}" style="margin-top:36px;">${buildExportHtml(c, withImg)}<div style="text-align:right;margin-top:8px;"><a href="#oc-top" style="font-size:13px;color:${tt};text-decoration:none;font-weight:700;">↑ 목록으로</a></div></div>`).join('');
+  return h + `</div>`;
+}
+function openExport({ title, build, file }){
   const m = openModal(`<h3>HTML 추출 (티스토리용)</h3>
     <p class="hint">티스토리 글쓰기 → 오른쪽 위 <b>기본모드</b>를 <b>HTML</b>로 바꾼 뒤 붙여넣으세요.</p>
     <label class="check"><input type="checkbox" id="xImg" checked> 사진을 코드 안에 포함하기</label>
@@ -784,7 +871,7 @@ function openExport(c){
     <div class="modal-actions"><button class="btn" data-dl>.html 파일로 받기</button><button class="btn primary" data-copy>코드 복사</button></div>`);
   const box = $('#xImg', m.el), code = $('#xCode', m.el);
   const upd = () => {
-    code.value = buildExportHtml(c, box.checked);
+    code.value = build(box.checked);
     $('#xInfo', m.el).innerHTML = `코드 크기: ${fmtSize(code.value.length)}` + (box.checked
       ? (code.value.length > 2e6 ? ' · 너무 크면 티스토리 편집기가 느려질 수 있어요. 사진 미포함을 써 보세요.' : '')
       : ' · 코드 속 <b>IMAGE_URL</b>을 티스토리에 올린 사진 주소로 바꿔 주세요.');
@@ -794,7 +881,7 @@ function openExport(c){
     try { await navigator.clipboard.writeText(code.value); } catch { code.removeAttribute('readonly'); code.select(); document.execCommand('copy'); code.setAttribute('readonly', ''); }
     toast('복사했어요!');
   };
-  $('[data-dl]', m.el).onclick = () => download(new Blob([`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(c.name)}</title></head><body style="margin:0;padding:16px;background:#f3f2f7;">${code.value}</body></html>`], { type: 'text/html' }), `${c.name || 'character'}.html`);
+  $('[data-dl]', m.el).onclick = () => download(new Blob([`<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title></head><body style="margin:0;padding:16px;background:#f3f2f7;">${code.value}</body></html>`], { type: 'text/html' }), `${file}.html`);
 }
 
 /* ---------- settings / backup ---------- */
