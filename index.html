@@ -53,6 +53,8 @@ hr{border:0;border-top:1px solid var(--line);margin:18px 0}
 .input{width:100%;padding:10px 13px;border-radius:12px;border:1px solid var(--line);background:var(--surface);outline:none;font-size:15px;transition:border-color .15s}
 .input:focus{border-color:var(--theme)}
 textarea.input{resize:vertical;min-height:140px;line-height:1.7}
+textarea.input.grow{min-height:0;resize:none;overflow:hidden;line-height:1.5;display:block}
+.kv{align-items:start}
 select.input{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
 .field{display:block;margin-bottom:12px}
 .field>span{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:5px}
@@ -101,7 +103,7 @@ select.input{appearance:none;-webkit-appearance:none;background-image:linear-gra
 .hero h1{margin:0;font-size:32px;line-height:1.25;letter-spacing:-.01em}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;justify-content:center}
 .tag{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--soft2);color:var(--theme-text);font-weight:700}
-.quote{margin:8px 0 4px;font-size:14px;color:var(--theme-text);font-weight:500;line-height:1.6}
+.quote{margin:8px 0 4px;font-size:14px;color:var(--theme-text);font-weight:500;line-height:1.6;font-style:italic}
 .profile{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;margin:14px 0 0;font-size:14px;background:var(--surface);padding:14px 18px;border-radius:16px;border:1px solid var(--line);text-align:left}
 .profile dt{color:var(--theme-text);font-weight:700}
 .profile dd{margin:0}
@@ -206,8 +208,10 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 /* 시기 */
 .era-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 12px;margin-bottom:4px;scrollbar-width:none}
 .era-strip::-webkit-scrollbar{display:none}
-.era-btn{flex:none;width:84px;border:0;background:transparent;padding:0;text-align:center;color:var(--text)}
+.era-btn{flex:none;min-width:84px;max-width:120px;border:0;background:transparent;padding:0;text-align:center;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.era-btn b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .era-thumb{display:flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:18px;background:var(--soft) center 20%/cover no-repeat;border:3px solid transparent;font-weight:800;color:var(--theme-text);font-size:22px;box-sizing:border-box}
+.era-thumb{background-origin:border-box}
 .era-btn.on .era-thumb{border-color:var(--theme)}
 .era-btn b{display:block;font-size:13px;margin-top:4px;line-height:1.3}
 .era-btn.on b{color:var(--theme-text)}
@@ -343,6 +347,34 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 .thumb-prev{width:96px;height:96px;flex:none;border-radius:14px;background:var(--soft) center 20%/cover no-repeat;touch-action:none;cursor:ns-resize;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);border:1px solid var(--line)}
 .thumb-ctl{flex:1;min-width:0}
 .thumb-ctl input{width:100%;accent-color:var(--theme)}
+/* 프로필: 구분선 목록 */
+.plist{margin:16px 0 0;padding:0}
+.prow{display:grid;grid-template-columns:84px 1fr;gap:14px;padding:9px 4px;border-bottom:1px solid var(--line);align-items:baseline}
+.prow:first-child{border-top:1px solid var(--line)}
+.prow dt{font-size:13px;font-weight:700;color:var(--theme-text)}
+.prow dd{margin:0;line-height:1.55}
+.era-panel .plist{margin-top:14px}
+/* 시기 비교 (둥근 표) */
+.c2-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+.c2{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
+.c2 th,.c2 td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;line-height:1.55}
+.c2 tbody tr:last-child > *{border-bottom:0}
+.c2 thead th{text-align:center;padding:14px 10px 12px;border-bottom:1px solid var(--line);vertical-align:bottom}
+.c2 thead th b{display:block;font-size:16px;margin-top:5px;line-height:1.3}
+.c2-chip{display:inline-block;font-size:12px;font-weight:800;padding:2px 10px;border-radius:999px;background:var(--theme);color:var(--on-theme);white-space:nowrap}
+.c2 tbody th{position:sticky;left:0;z-index:1;background:var(--surface);color:var(--theme-text);font-size:13px;font-weight:700;white-space:nowrap;width:84px;border-right:1px solid var(--line)}
+.c2 thead th.corner{position:sticky;left:0;z-index:2;background:var(--surface);border-right:1px solid var(--line)}
+.c2 td{min-width:150px}
+.c2 td.same{color:var(--muted)}
+.c2 .mark{display:inline-block;background:var(--soft2);color:var(--text);border-radius:10px;padding:1px 9px;margin-left:-4px}
+.c2-pic td{text-align:center}
+.c2-img{width:112px;margin:0 auto}
+.c2-img .pic34{border-radius:14px}
+.c2-grp th{background:var(--bg) !important;padding:6px 12px !important;border-right:0 !important}
+.c2-grp th span{display:inline-block;font-size:12px;font-weight:800;color:var(--theme-text);background:var(--soft);padding:1px 10px;border-radius:999px}
+.png-box .c2-wrap{overflow:hidden}
+.png-box .c2 tbody th{position:static}
+.png-box .c2 thead th.corner{position:static}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1d1b26;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;transition:.2s;z-index:300;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -649,30 +681,31 @@ function deedsSection(c){
     + aus.map(g => `<div class="au-block"><div class="au-h"><span class="tl-chip au">AU</span><b>${esc(g.era.label)}</b></div>${timelineHtml(c, g.deeds, false)}</div>`).join(''));
 }
 // 2칸 프로필 상자 (길면 한 줄 전체 사용)
-const pgrid = list => `<div class="pgrid">${list.map(p => `<div class="pbox ${(p.k.length + p.v.length > 16 || p.v.includes('\n')) ? 'wide' : ''}"><span>${esc(p.k)}</span><div>${nl(p.v)}</div></div>`).join('')}</div>`;
-// 시기 비교: 나무위키 프로필 카드처럼 [기본(원작) + 시기들]을 붙여서 나열.
-// 값은 모두 채우고, 기본과 달라진 칸만 색칠(같은 값은 흐리게).
+const pgrid = list => `<dl class="plist">${list.map(p => `<div class="prow"><dt>${esc(p.k)}</dt><dd>${nl(p.v)}</dd></div>`).join('')}</dl>`;
+// 시기 비교: 줄 = 항목, 칸 = [기본(원작) + 시기들]. 값은 모두 채우고, 기본과 달라진 값만 둥근 표시로 강조.
 function compareTable(c){
   const cols = [{ name: c.name, label: c.kind === 'canon' ? '원작' : '기본', image: c.image, sub: c.subtitle.trim(), prof: mergedProfile(c, null), story: c.story.trim(), rel: r => r.relation.trim() }]
-    .concat(c.eras.map(e => ({ name: e.name.trim() || c.name, label: esc(e.label) + (e.au ? ' · AU' : '') + (e.id === c.mainEra ? ' ★' : ''), image: e.image,
+    .concat(c.eras.map(e => ({ name: e.name.trim() || c.name, label: (e.au ? 'AU · ' : '') + esc(e.label) + (e.id === c.mainEra ? ' ★' : ''), image: e.image,
       sub: e.subtitle.trim() || c.subtitle.trim(), prof: mergedProfile(c, e), story: e.story.trim(), rel: r => relText(r, e) })));
-  const rows = [];
-  if (cols.some(x => x.sub)) rows.push({ label: '한 줄 소개', vals: cols.map(x => esc(x.sub)) });
+  const n = cols.length, out = [];
+  const row = (label, vals, plain) => out.push(`<tr><th>${label}</th>${vals.map((v, j) => {
+    if (!v) return '<td class="same"></td>';
+    if (j === 0 || plain) return `<td>${v}</td>`;
+    return v === vals[0] ? `<td class="same">${v}</td>` : `<td class="chg"><span class="mark">${v}</span></td>`;
+  }).join('')}</tr>`);
+  const group = t => out.push(`<tr class="c2-grp"><th colspan="${n + 1}"><span>${t}</span></th></tr>`);
+  if (cols.some(x => x.name !== c.name)) row('이름', cols.map(x => esc(x.name)));
+  if (cols.some(x => x.sub)) row('한 줄 소개', cols.map(x => esc(x.sub)));
   const keys = [];
   cols.forEach(x => x.prof.forEach(p => { if (!keys.includes(p.k)) keys.push(p.k); }));
-  keys.forEach(k => rows.push({ label: esc(k), vals: cols.map(x => { const p = x.prof.find(q => q.k === k); return p ? nl(p.v) : ''; }) }));
-  c.relations.filter(hasEraRel).forEach(r => rows.push({ label: esc(relInfo(r).name || '관계'), vals: cols.map(x => esc(x.rel(r))) }));
-  if (cols.some(x => x.story)) rows.push({ label: '서사', vals: cols.map(x => x.story ? nl(x.story) : ''), plain: true });
-  const cell = (r, v, j) => {
-    if (j === 0 || r.plain) return `<td>${v}</td>`;
-    return v === r.vals[0] ? `<td class="same">${v}</td>` : `<td class="chg">${v}</td>`;
-  };
-  return `<table class="nm" style="width:${cols.length * 270}px">
-    <colgroup>${cols.map(() => '<col style="width:86px"><col>').join('')}</colgroup>
-    <tr class="nm-head">${cols.map(x => `<th colspan="2"><div class="nm-name">${esc(x.name)}</div><div class="nm-era">${x.label}</div></th>`).join('')}</tr>
-    <tr class="nm-pic">${cols.map(x => `<td colspan="2">${x.image ? pic(x.image) : '<div class="pic34 empty"><span>사진 추가 예정</span></div>'}</td>`).join('')}</tr>
-    ${rows.map(r => `<tr>${r.vals.map((v, j) => `<th>${r.label}</th>${cell(r, v, j)}`).join('')}</tr>`).join('')}
-  </table>`;
+  if (keys.length){ group('프로필'); keys.forEach(k => row(esc(k), cols.map(x => { const p = x.prof.find(q => q.k === k); return p ? nl(p.v) : ''; }))); }
+  const rels = c.relations.filter(hasEraRel);
+  if (rels.length){ group('인간관계'); rels.forEach(r => row(esc(relInfo(r).name || '관계'), cols.map(x => esc(x.rel(r))))); }
+  if (cols.some(x => x.story)) row('상세', cols.map(x => x.story ? nl(x.story) : ''), true);
+  return `<div class="c2-wrap"><table class="c2">
+    <thead><tr><th class="corner"></th>${cols.map(x => `<th><span class="c2-chip">${x.label}</span><b>${esc(x.name)}</b></th>`).join('')}</tr></thead>
+    <tbody><tr class="c2-pic"><th>사진</th>${cols.map(x => `<td><div class="c2-img">${x.image ? pic(x.image) : '<div class="pic34 empty"><span>사진 추가 예정</span></div>'}</div></td>`).join('')}</tr>
+    ${out.join('')}</tbody></table></div>`;
 }
 /* ---------- detail ---------- */
 const sec = (title, body, cls = '') => `<section class="sec ${cls}"><h2><span class="bar"></span>${title}</h2>${body}</section>`;
@@ -702,12 +735,12 @@ function commonParts(c, live){
         <div class="meta"><span>${KIND[c.kind]}</span>${c.origin ? `<span>${esc(c.origin)}</span>` : ''}</div>
         ${c.subtitle ? `<p class="sub">${esc(c.subtitle)}</p>` : ''}
         <h1>${esc(c.name)}</h1>
-        ${c.quote.trim() ? `<p class="quote">「${esc(c.quote.trim())}」</p>` : ''}
+        ${c.quote.trim() ? `<p class="quote">${nl(c.quote.trim())}</p>` : ''}
         ${c.tags.length ? `<div class="tags">${c.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
       </div>
     </header>
     ${prof.length ? pgrid(prof) : ''}`,
-    story: c.story.trim() ? sec(hasEras ? '서사 <small>공통</small>' : '서사', `<div class="story">${nl(c.story)}</div>`) : '',
+    story: c.story.trim() ? sec(hasEras ? '상세 <small>공통</small>' : '상세', `<div class="story">${nl(c.story)}</div>`) : '',
     deeds: deedsSection(c),
     rels: rels.length ? sec(hasEras ? '인간관계 <small>공통</small>' : '인간관계', relCards(rels, live)) : '',
     extras: (motifs.length ? sec('모티브', `<div class="motif-grid">${motifs.map(m => `<div class="motif">
@@ -736,7 +769,7 @@ function eraPanel(c, e){
         ${sub ? `<p class="sub">${esc(sub)}</p>` : ''}
       </div></div>
     ${changed.length ? pgrid(changed) : ''}
-    ${e.story.trim() ? `<div class="sub-h">서사</div><div class="story">${nl(e.story)}</div>` : ''}
+    ${e.story.trim() ? `<div class="sub-h">상세</div><div class="story">${nl(e.story)}</div>` : ''}
     ${er.length ? `<div class="sub-h">이 시기의 인간관계</div>${relCards(er, true)}` : ''}
   </div>`;
 }
@@ -757,8 +790,8 @@ function renderDetail(id){
       ${p.hero}${p.story}${p.deeds}${p.rels}
       ${era ? sec('시기별', `<div class="era-strip">${c.eras.map(e => `<button class="era-btn ${e === era ? 'on' : ''}" data-act="era" data-v="${esc(e.id)}">
           <span class="era-thumb" style="${bgImg(e.image)}">${e.image ? '' : esc((e.label || '?').slice(0, 1))}</span>
-          <b>${esc(e.label || '이름 없는 시기')}</b>${e.au ? '<small>AU</small>' : ''}</button>`).join('')}</div>${eraPanel(c, era)}
-        <div class="sub-h" style="margin-top:22px">시기 비교 <small><span class="lg-chg"></span>색칠된 칸은 ${c.kind === 'canon' ? '원작' : '기본'}과 달라진 부분</small></div><div class="cmp-scroll">${compareTable(c)}</div>`, 'era-sec') : ''}
+          <b>${e.au ? 'AU · ' : ''}${esc(e.label || '이름 없는 시기')}</b></button>`).join('')}</div>${eraPanel(c, era)}
+        <div class="sub-h" style="margin-top:22px">시기 비교 <small><span class="lg-chg"></span>표시된 값은 ${c.kind === 'canon' ? '원작' : '기본'}과 달라진 부분</small></div>${compareTable(c)}`, 'era-sec') : ''}
       ${p.extras}
     </article>
     <div class="danger-row"><button class="btn sm" data-act="dup">복제하기</button><button class="btn danger sm" data-act="del-char">삭제하기</button></div>
@@ -825,7 +858,7 @@ function eraEdit(e, i, len){
       </div></div>
     <div class="sub-h">바뀌는 프로필 <small>공통과 다른 항목만 적으세요</small></div>
     <div id="sec-${p}.profile">${editList(p + '.profile')}</div>
-    <div class="sub-h">이 시기의 서사</div>
+    <div class="sub-h">이 시기의 상세</div>
     <textarea class="input" data-bind="${p}.story" rows="6" placeholder="이 시기에 있었던 이야기">${esc(e.story)}</textarea>
     <p class="hint" style="margin-top:8px">이 시기의 행적은 아래 <b>행적</b> 칸에서 시기를 골라 적어요.</p>
     <div class="item-tools" style="margin-top:10px"><button class="mini danger" data-act="del" data-sec="eras" data-i="${i}">시기 삭제</button></div>
@@ -838,7 +871,7 @@ function editList(path){
     const isEra = path !== 'profile';
     return arr.map((p, i) => `<div class="kv">
       <input class="input" data-bind="${path}.${i}.k" value="${esc(p.k)}" placeholder="${isEra ? '항목 (예: 나이)' : '항목'}" ${isEra ? 'list="profKeys"' : ''}>
-      <input class="input" data-bind="${path}.${i}.v" value="${esc(p.v)}" placeholder="${isEra ? '이 시기의 값' : '내용'}">
+      <textarea class="input grow" rows="1" data-bind="${path}.${i}.v" placeholder="${isEra ? '이 시기의 값' : '내용 (엔터로 줄바꿈)'}">${esc(p.v)}</textarea>
       <button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}" aria-label="삭제">✕</button></div>`).join('') + add;
   }
   if (key === 'deeds'){
@@ -851,7 +884,9 @@ function editList(path){
   if (key === 'eras') return arr.map((e, i) => eraEdit(e, i, len)).join('') + add;
   return arr.map((it, i) => `<div class="item-edit">${itemFields(path, it, i)}<div class="item-tools">${tools(path, i, len)}</div></div>`).join('') + add;
 }
-const rerender = s => { const el = document.getElementById('sec-' + s); if (el) el.innerHTML = editList(s); };
+const autosize = t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 2 + 'px'; };
+const autosizeAll = (root = document) => root.querySelectorAll('textarea.grow').forEach(autosize);
+const rerender = s => { const el = document.getElementById('sec-' + s); if (el){ el.innerHTML = editList(s); autosizeAll(el); } };
 const mainImg = () => slot('main', 0, draft.image, 'r34 big');
 const refreshKeys = () => { const d = $('#profKeys'); if (d) d.innerHTML = [...new Set(draft.profile.map(p => p.k.trim()).filter(Boolean))].map(k => `<option value="${esc(k)}">`).join(''); };
 
@@ -884,14 +919,14 @@ function renderEdit(id){
         <div class="thumb-adj"><div class="thumb-prev" id="thumbPrev"></div>
           <div class="thumb-ctl"><input type="range" min="0" max="100" step="1" id="thumbY" value="${draft.thumbY}" aria-label="목록 사진 위치">
           <p class="hint">사진을 위아래로 끌거나 슬라이더로 맞춰요. 대표 시기 사진이 있으면 그 사진을 써요.</p></div></div></div>
-      <label class="field"><span>대표 대사</span><input class="input" data-bind="quote" value="${esc(draft.quote)}" placeholder="이 아이를 한마디로 보여주는 대사"></label>
+      <label class="field"><span>대표 대사 (엔터로 줄바꿈)</span><textarea class="input grow" rows="1" data-bind="quote" placeholder="이 아이를 한마디로 보여주는 대사">${esc(draft.quote)}</textarea></label>
       <label class="field"><span>태그 (쉼표로 구분)</span><input class="input" data-kind="tags" value="${esc(draft.tags.join(', '))}" placeholder="예: 판타지, 메인, 오너캐"></label>
       <div class="field"><span>캐릭터 색 (이 아이 페이지에만 적용)</span>
         <div class="color-row"><input type="color" id="cColor" value="${colorOf(draft)}"><span class="muted" id="cColorLabel">${draft.color || '사이트 테마 색 사용 중'}</span>
         <button class="btn sm ghost" data-act="color-reset">테마 색으로</button></div></div>`)}
     ${card('프로필 항목', '나이, 키, 생일, 종족, MBTI… 자유롭게 추가하세요. 원작이 같은 캐릭터들은 항목이 자동으로 맞춰져요.', `<div id="sec-profile">${editList('profile')}</div>`)}
-    ${card('시기 (버전)', '같은 캐릭터의 시기별 모습을 나눠 정리해요. 시기마다 사진, 한 줄 소개, 서사, 행적을 따로 쓰고, 프로필은 바뀌는 항목만 적으면 돼요. 시기가 없으면 비워두세요.', `<div id="sec-eras">${editList('eras')}</div><datalist id="profKeys"></datalist>`)}
-    ${card('서사', '시기를 나눴다면 여기엔 모든 시기에 공통인 내용을 적어요.', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
+    ${card('시기 (버전)', '같은 캐릭터의 시기별 모습을 나눠 정리해요. 시기마다 사진, 이름, 한 줄 소개, 상세를 따로 쓰고 (행적은 아래 행적 칸에서 시기를 골라요), 프로필은 바뀌는 항목만 적으면 돼요. 시기가 없으면 비워두세요.', `<div id="sec-eras">${editList('eras')}</div><datalist id="profKeys"></datalist>`)}
+    ${card('상세', '성격, 배경, 설정 등 자세한 내용을 적어요. 시기를 나눴다면 여기엔 모든 시기에 공통인 내용을 적어요.', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
     ${card('행적', '있었던 일을 일어난 순서대로 한 줄씩 적어요. 시기가 있으면 행적마다 시기를 고를 수 있고, 시기가 오가도 순서대로 이어서 보여줘요.', `<div id="sec-deeds">${editList('deeds')}</div>`)}
     ${card('인간관계', '상대와 무슨 관계인지 한 줄로. 같은 원작(또는 원작을 정하지 않은) 캐릭터 중에서 고를 수 있고, 고르면 서로 페이지로 이동할 수 있어요. 시기가 있으면 시기별로 관계를 다르게 적을 수 있어요.', `<div id="sec-relations">${editList('relations')}</div>`)}
     <div id="oc-only" style="${draft.kind === 'canon' ? 'display:none' : ''}">
@@ -904,6 +939,7 @@ function renderEdit(id){
   applyVars($('#scope'), colorOf(draft));
   refreshKeys();
   setupThumbAdj();
+  requestAnimationFrame(() => autosizeAll());
   $('#originInput').onchange = () => {
     rerender('relations');
     const o = draft.origin.trim(); if (!o) return;
@@ -963,6 +999,7 @@ app.addEventListener('input', e => {
   if (t.dataset.kind === 'tags'){ draft.tags = [...new Set(t.value.split(/[,，#]/).map(s => s.trim()).filter(Boolean))]; dirty = true; return; }
   const b = t.dataset.bind; if (!b) return;
   setPath(draft, b, t.value); dirty = true;
+  if (t.classList.contains('grow')) autosize(t);
   if (t.dataset.rerender) rerender(t.dataset.rerender);
 });
 app.addEventListener('change', e => {
@@ -1196,7 +1233,7 @@ async function savePng(c){
   m.el.addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; m.close(); eraPng(c, b.dataset.p); });
 }
 async function eraPng(c, mode){
-  const tableW = (c.eras.length + 1) * 270;
+  const tableW = 110 + (c.eras.length + 1) * 200;
   const W = mode === 'common' ? 760 : Math.max(760, tableW + 48);
   const box = document.createElement('div');
   box.className = 'png-box'; box.style.width = W + 'px';
@@ -1240,7 +1277,7 @@ function buildExportHtml(c, withImg){
   const H3 = s => `<div style="font-size:14px;font-weight:800;color:${tt};margin:14px 0 6px;">${s}</div>`;
   const table = rows => `<table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;${card}overflow:hidden;font-size:14px;">${rows.map((p, i) => {
     const bd = i < rows.length - 1 ? 'border-bottom:1px solid #f0edf5;' : '';
-    return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${esc(p.v)}</td></tr>`; }).join('')}</table>`;
+    return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${nl(p.v)}</td></tr>`; }).join('')}</table>`;
   const dots = a => `<div style="${card}padding:10px 14px;">${a.map(d => `<div style="display:flex;gap:8px;margin:3px 0;"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:${t};margin-top:10px;"></span><span>${esc(d.text)}</span></div>`).join('')}</div>`;
   const timeline = (ds, chips) => {
     const rows = []; let cur = null;
@@ -1280,9 +1317,9 @@ function buildExportHtml(c, withImg){
   h += `<div style="font-size:30px;font-weight:800;line-height:1.3;">${esc(c.name)}</div>`;
   if (c.tags.length) h += `<div style="margin-top:8px;">${c.tags.map(x => `<span style="display:inline-block;margin:2px;font-size:12px;padding:2px 10px;border-radius:999px;background:${soft2};color:${tt};font-weight:700;">#${esc(x)}</span>`).join('')}</div>`;
   h += `</div>`;
-  if (c.quote.trim()) h += `<div style="text-align:center;margin:10px 0 0;font-size:14px;color:${tt};">「${esc(c.quote.trim())}」</div>`;
+  if (c.quote.trim()) h += `<div style="text-align:center;margin:10px 0 0;font-size:14px;color:${tt};font-style:italic;">${nl(c.quote.trim())}</div>`;
   if (prof.length) h += table(prof);
-  if (c.story.trim()) h += H2(hasEras ? '서사 (공통)' : '서사') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
+  if (c.story.trim()) h += H2(hasEras ? '상세 (공통)' : '상세') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
   { const g = deedGroups(c);
     if (g.main.length || g.aus.length) h += H2(hasEras ? '행적 (전체 흐름)' : '행적')
       + (g.main.length ? timeline(g.main, c.eras.some(e => !e.au)) : '')
@@ -1298,7 +1335,7 @@ function buildExportHtml(c, withImg){
       b += `<div style="text-align:center;font-size:24px;font-weight:800;line-height:1.3;margin-top:10px;">${esc(e.name.trim() || c.name)}</div>`;
       if (e.subtitle.trim()) b += `<div style="text-align:center;color:${tt};font-weight:700;">${esc(e.subtitle)}</div>`;
       if (changed.length) b += H3('바뀐 프로필') + table(changed).replace('margin-top:14px;', '');
-      if (e.story.trim()) b += H3('서사') + `<div style="line-height:1.8;">${nl(e.story)}</div>`;
+      if (e.story.trim()) b += H3('상세') + `<div style="line-height:1.8;">${nl(e.story)}</div>`;
       if (er.length) b += H3('인간관계') + er.map(r => relRow(r, r.byEra[e.id])).join('');
       return b + `</div></div>`;
     }).join('');
