@@ -208,6 +208,60 @@ input[type=color]{width:46px;height:46px;border:1px solid var(--line);padding:3p
 .gc-info{padding:12px 14px 14px;border-top:5px solid var(--theme);text-align:center}
 .gc-info b{display:block;font-size:20px;line-height:1.35}
 .gc-info span{display:block;font-size:14px;color:var(--muted);line-height:1.4;margin-top:2px}
+/* 시기 */
+.era-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 12px;margin-bottom:4px;scrollbar-width:none}
+.era-strip::-webkit-scrollbar{display:none}
+.era-btn{flex:none;width:84px;border:0;background:transparent;padding:0;text-align:center;color:var(--text)}
+.era-thumb{display:flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:18px;background:var(--soft) center 20%/cover no-repeat;border:3px solid transparent;font-weight:800;color:var(--theme-text);font-size:22px;box-sizing:border-box}
+.era-btn.on .era-thumb{border-color:var(--theme)}
+.era-btn b{display:block;font-size:13px;margin-top:4px;line-height:1.3}
+.era-btn.on b{color:var(--theme-text)}
+.era-btn small{display:block;font-size:11px;color:var(--muted)}
+.part-lbl{display:inline-block;font-size:12px;font-weight:800;padding:2px 10px;border-radius:999px;background:var(--soft2);color:var(--theme-text);margin:0 0 6px}
+.part-lbl.era{background:var(--theme);color:var(--on-theme)}
+.story + .part-lbl,.deeds + .part-lbl{margin-top:14px}
+.deeds{margin:0;padding:12px 18px 12px 38px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.deeds li{margin:3px 0}
+.profile dd.chg{font-weight:700;color:var(--theme-text)}
+.meta span.era-badge{background:var(--theme);color:var(--on-theme);border-color:transparent}
+.cmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:16px;border:1px solid var(--line);background:var(--surface)}
+.cmp{border-collapse:collapse;width:100%;font-size:14px;background:var(--surface)}
+.cmp th,.cmp td{padding:10px 12px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);vertical-align:top;text-align:left;line-height:1.55}
+.cmp td{min-width:170px}
+.cmp tr > :first-child{border-left:0}
+.cmp tbody th{color:var(--theme-text);font-weight:700;background:var(--soft);font-size:13px;min-width:84px}
+.cmp thead th{background:var(--theme);color:var(--on-theme);font-weight:800;font-size:15px}
+.cmp tr.grp th{background:var(--soft2);color:var(--theme-text);font-size:12px;padding:5px 12px}
+.cmp tr.img td img{width:100%;max-width:200px;height:auto;display:block;border-radius:12px}
+.cmp ol{margin:0;padding-left:18px}
+.cmp .dash{color:var(--muted)}
+.cmp tbody tr:last-child > *{border-bottom:0}
+.png-box{position:absolute;left:-99999px;top:0;background:var(--bg);padding:28px 24px;font-family:inherit}
+.png-box .sheet{padding:0}
+.png-box .png-cmp{margin-top:8px}
+.png-box .sheet + .png-cmp{margin-top:34px}
+.png-box .cmp{border:1px solid var(--line)}
+.png-box .cmp td{width:250px;min-width:0}
+.png-box .cmp tbody th{width:140px}
+.pc-head{text-align:center;margin-bottom:18px}
+.pc-name{font-size:30px;font-weight:800;line-height:1.3}
+.pc-sub{color:var(--theme-text);font-weight:700}
+.pc-h2{font-size:18px;margin:0 0 12px;display:flex;align-items:center;gap:9px}
+/* 시기 편집 */
+.era-edit{border:2px solid var(--soft2);border-radius:16px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.era-top{display:flex;gap:10px;flex-wrap:wrap}
+.era-top .fields{flex:1;min-width:170px;display:grid;gap:6px;align-content:start}
+.sub-h{font-size:13px;font-weight:800;color:var(--theme-text);margin:12px 0 6px}
+.sub-h small{font-weight:600;color:var(--muted);margin-left:4px}
+.kv.deed{grid-template-columns:20px 1fr auto}
+.deed-n{font-size:13px;font-weight:800;color:var(--muted);text-align:center}
+.deed-tools{display:flex;gap:3px}
+.deed-tools .mini{padding:4px 7px}
+.era-rel{display:grid;gap:6px}
+.era-rel .sub-h{margin:6px 0 0}
+.era-rel-row{display:grid;grid-template-columns:minmax(64px,28%) 1fr;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--theme-text)}
+.check.sm{font-size:13px;margin:2px 0}
+.check.sm input{width:16px;height:16px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1d1b26;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;transition:.2s;z-index:300;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
@@ -279,18 +333,25 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && sav
 function blankChar(){
   return { id: uid(), kind: 'oc', origin: '', name: '', subtitle: '', image: '', color: '', tags: [],
     profile: [{k:'나이',v:''},{k:'키',v:''},{k:'생일',v:''}],
-    quote: '', story: '', relations: [], motifs: [], songs: [], wardrobe: [], created: Date.now(), updated: Date.now() };
+    quote: '', story: '', deeds: [], eras: [], mainEra: '',
+    relations: [], motifs: [], songs: [], wardrobe: [], created: Date.now(), updated: Date.now() };
 }
 function normalizeChar(c){
   const b = blankChar(); c = (c && typeof c === 'object') ? c : {};
   const str = v => typeof v === 'string' ? v : (v == null ? '' : String(v));
   const arr = (v, f) => Array.isArray(v) ? v.filter(x => x && typeof x === 'object').map(f) : [];
+  const sid = v => (typeof v === 'string' && /^[\w-]{1,40}$/.test(v)) ? v : uid();
+  const deeds = v => arr(v, d => ({ id: sid(d.id), text: str(d.text) }));
+  const prof = v => arr(v, p => ({ k: str(p.k), v: str(p.v) }));
+  const byEra = v => (v && typeof v === 'object' && !Array.isArray(v)) ? Object.fromEntries(Object.entries(v).filter(([k]) => /^[\w-]{1,40}$/.test(k)).map(([k, x]) => [k, str(x)])) : {};
   return {
     id: str(c.id) || b.id, kind: c.kind === 'canon' ? 'canon' : 'oc', origin: str(c.origin).trim(), name: str(c.name), subtitle: str(c.subtitle), image: safeImg(c.image),
     color: isHex(c.color) ? c.color : '', tags: Array.isArray(c.tags) ? c.tags.map(str).filter(Boolean) : [],
-    profile: Array.isArray(c.profile) ? arr(c.profile, p => ({ k: str(p.k), v: str(p.v) })) : b.profile,
-    quote: str(c.quote), story: str(c.story),
-    relations: arr(c.relations, r => ({ id: str(r.id) || uid(), targetId: str(r.targetId), name: str(r.name), image: safeImg(r.image), relation: str(r.relation) })),
+    profile: Array.isArray(c.profile) ? prof(c.profile) : b.profile,
+    quote: str(c.quote), story: str(c.story), deeds: deeds(c.deeds),
+    eras: arr(c.eras, e => ({ id: sid(e.id), label: str(e.label), image: safeImg(e.image), subtitle: str(e.subtitle), story: str(e.story), deeds: deeds(e.deeds), profile: prof(e.profile) })),
+    mainEra: str(c.mainEra),
+    relations: arr(c.relations, r => ({ id: str(r.id) || uid(), targetId: str(r.targetId), name: str(r.name), image: safeImg(r.image), relation: str(r.relation), byEra: byEra(r.byEra) })),
     motifs: arr(c.motifs, m => ({ id: str(m.id) || uid(), name: str(m.name), image: safeImg(m.image), reason: str(m.reason) })),
     songs: arr(c.songs, s => ({ id: str(s.id) || uid(), title: str(s.title), artist: str(s.artist), url: str(s.url), note: str(s.note) })),
     wardrobe: arr(c.wardrobe, w => ({ id: str(w.id) || uid(), image: safeImg(w.image), caption: str(w.caption) })),
@@ -341,7 +402,7 @@ function applyTheme(){
 
 /* ---------- router ---------- */
 const app = $('#app');
-const ui = { q: '', tag: '', kind: '', origin: '', cid: null };
+const ui = { q: '', tag: '', kind: '', origin: '', cid: null, eraSel: {} };
 let draft = null, dirty = false, isNew = false, suppress = false, currentHash = location.hash;
 
 function route(){
@@ -418,29 +479,121 @@ function drawGrid(){
   g.className = 'grid';
   g.innerHTML = `<a class="char-card new-card" href="#/new"><span><big>＋</big><br>새 캐릭터</span></a>`
     + list.map(c => `<a class="char-card" href="#/c/${encodeURIComponent(c.id)}">
-        <div class="thumb" style="${bgImg(c.image)}">${c.image ? '' : esc((c.name || '?').slice(0, 1))}</div>
+        <div class="thumb" style="${bgImg(repImage(c))}">${repImage(c) ? '' : esc((c.name || '?').slice(0, 1))}</div>
         <div class="info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b><span>${esc([c.kind === 'canon' ? '원작캐' : '', c.origin, c.subtitle].filter(Boolean).join(' · ')) || '&nbsp;'}</span></div></a>`).join('')
     + (list.length ? '' : `<p class="muted" style="grid-column:1/-1">검색 결과가 없어요.</p>`);
 }
 
+/* ---------- 시기(버전) helpers ---------- */
+const eraOf = (c, id) => id ? c.eras.find(e => e.id === id) : null;
+// 목록·단체 PNG에 쓰는 대표 사진: 대표 시기 사진 → 공통 사진 → 사진 있는 첫 시기
+function repImage(c){ const m = eraOf(c, c.mainEra); return (m && m.image) || c.image || (c.eras.find(e => e.image) || {}).image || ''; }
+// 공통 프로필 + 시기에서 바뀐 값만 덮어쓰기
+function mergedProfile(c, era){
+  const ov = new Map();
+  (era ? era.profile : []).forEach(p => { const k = p.k.trim(); if (k && p.v.trim()) ov.set(k, p.v); });
+  const out = [], seen = new Set();
+  c.profile.forEach(p => { const k = p.k.trim(); if (!k || seen.has(k)) return; seen.add(k); const v = ov.has(k) ? ov.get(k) : p.v; if (v.trim()) out.push({ k, v, changed: ov.has(k) }); });
+  ov.forEach((v, k) => { if (!seen.has(k)) out.push({ k, v, changed: true }); });
+  return out;
+}
+const relText = (r, era) => ((era && r.byEra[era.id]) || '').trim() || r.relation.trim();
+const hasEraRel = r => Object.values(r.byEra).some(v => String(v).trim());
+// era가 있으면 그 시기에 보이는 관계, 없으면 공통 관계
+function relList(c, era){
+  return c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim() || hasEraRel(r))
+    .map(r => ({ r, text: era ? relText(r, era) : r.relation.trim() }))
+    .filter(({ r, text }) => era ? !!text : (!!text || !hasEraRel(r)));
+}
+const liveDeeds = a => a.filter(d => d.text.trim());
+// 시기 비교표 행 데이터
+function compareRows(c){
+  const eras = c.eras, dash = '<span class="dash">—</span>', rows = [];
+  rows.push({ label: '사진', cls: 'img', cells: eras.map(e => (e.image || c.image) ? `<img src="${e.image || c.image}" alt="">` : dash) });
+  if (eras.some(e => e.subtitle.trim())) rows.push({ label: '한 줄 소개', cells: eras.map(e => esc(e.subtitle.trim() || c.subtitle) || dash) });
+  const keys = [];
+  eras.forEach(e => e.profile.forEach(p => { const k = p.k.trim(); if (k && p.v.trim() && !keys.includes(k)) keys.push(k); }));
+  if (keys.length){
+    const base = new Map(c.profile.map(p => [p.k.trim(), p.v.trim()]));
+    rows.push({ group: '프로필' });
+    keys.forEach(k => rows.push({ label: esc(k), cells: eras.map(e => { const o = e.profile.find(p => p.k.trim() === k && p.v.trim()); return o ? `<b>${esc(o.v)}</b>` : (esc(base.get(k)) || dash); }) }));
+  }
+  if (eras.some(e => e.story.trim())) rows.push({ label: '서사', cls: 'long', cells: eras.map(e => e.story.trim() ? nl(e.story) : dash) });
+  if (eras.some(e => liveDeeds(e.deeds).length)) rows.push({ label: '행적', cls: 'long', cells: eras.map(e => { const d = liveDeeds(e.deeds); return d.length ? `<ol>${d.map(x => `<li>${esc(x.text)}</li>`).join('')}</ol>` : dash; }) });
+  const rels = c.relations.filter(hasEraRel);
+  if (rels.length){
+    rows.push({ group: '인간관계' });
+    rels.forEach(r => rows.push({ label: esc(relInfo(r).name || '이름 없음'), cells: eras.map(e => esc(relText(r, e)) || dash) }));
+  }
+  return rows;
+}
+function compareTable(c){
+  const rows = compareRows(c), n = c.eras.length;
+  return `<table class="cmp"><thead><tr><th></th>${c.eras.map(e => `<th>${esc(e.label || '시기')}${e.id === c.mainEra ? ' ★' : ''}</th>`).join('')}</tr></thead><tbody>${rows.map(r => r.group
+    ? `<tr class="grp"><th colspan="${n + 1}">${r.group}</th></tr>`
+    : `<tr class="${r.cls || ''}"><th>${r.label}</th>${r.cells.map(x => `<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
 /* ---------- detail ---------- */
 const sec = (title, body) => `<section class="sec"><h2><span class="bar"></span>${title}</h2>${body}</section>`;
 function relInfo(r){
   const target = r.targetId ? getChar(r.targetId) : null;
-  return { target, name: target ? target.name : r.name, image: (target ? target.image : '') || r.image };
+  return { target, name: target ? target.name : r.name, image: (target ? repImage(target) : '') || r.image };
+}
+const deedHtml = a => `<ol class="deeds">${a.map(d => `<li>${esc(d.text)}</li>`).join('')}</ol>`;
+// mode: 'page' (era = 지금 보는 시기, 시기가 없으면 null) | 'common' (공통 사항만)
+function sheetHtml(c, era, mode){
+  const common = mode === 'common', hasEras = c.eras.length > 0;
+  if (common) era = null;
+  const img = common ? repImage(c) : ((era && era.image) || c.image || (hasEras ? repImage(c) : ''));
+  const subtitle = (era && era.subtitle.trim()) || c.subtitle;
+  const prof = mergedProfile(c, era);
+  const rels = relList(c, era);
+  const oc = c.kind !== 'canon';
+  const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
+  const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
+  const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
+  const lbl = era ? esc(era.label || '이 시기') : '';
+  const tagC = hasEras && !common ? '<div class="part-lbl">공통</div>' : '';
+  const storyParts = (c.story.trim() ? `${tagC}<div class="story">${nl(c.story)}</div>` : '') + (era && era.story.trim() ? `<div class="part-lbl era">${lbl}</div><div class="story">${nl(era.story)}</div>` : '');
+  const cd = liveDeeds(c.deeds), ed = era ? liveDeeds(era.deeds) : [];
+  const deedParts = (cd.length ? tagC + deedHtml(cd) : '') + (ed.length ? `<div class="part-lbl era">${lbl}</div>${deedHtml(ed)}` : '');
+  return `<header class="hero ${img ? '' : 'noimg'}">
+      ${img ? `<div class="hero-img"><img src="${img}" alt=""></div>` : ''}
+      <div class="hero-info">
+        <div class="meta"><span>${KIND[c.kind]}</span>${c.origin ? `<span>${esc(c.origin)}</span>` : ''}${era ? `<span class="era-badge">${lbl}</span>` : ''}${common && hasEras ? '<span class="era-badge">공통 사항</span>' : ''}</div>
+        ${subtitle ? `<p class="sub">${esc(subtitle)}</p>` : ''}
+        <h1>${esc(c.name)}</h1>
+        ${c.tags.length ? `<div class="tags">${c.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
+        ${c.quote.trim() ? `<blockquote class="quote">“${esc(c.quote)}”</blockquote>` : ''}
+        ${prof.length ? `<dl class="profile">${prof.map(p => `<dt>${esc(p.k)}</dt><dd class="${p.changed ? 'chg' : ''}">${esc(p.v)}</dd>`).join('')}</dl>` : ''}
+      </div>
+    </header>
+    ${storyParts ? sec('서사', storyParts) : ''}
+    ${deedParts ? sec('행적', deedParts) : ''}
+    ${rels.length ? sec('인간관계', `<div class="rel-list">${rels.map(({ r, text }) => {
+      const { target, name, image } = relInfo(r);
+      const inner = `<div class="avatar" style="${bgImg(image)}">${image ? '' : esc((name || '?').slice(0, 1))}</div>
+        <div class="txt"><b>${esc(name || '이름 없음')}</b><span>${esc(text)}</span></div>`;
+      return target && !common ? `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>` : `<div class="rel">${inner}</div>`;
+    }).join('')}</div>`) : ''}
+    ${motifs.length ? sec('모티브', `<div class="motif-grid">${motifs.map(m => `<div class="motif">
+      ${m.image ? `<img src="${m.image}" alt="">` : ''}<div class="mt"><b>${esc(m.name)}</b>${m.reason.trim() ? `<p>${esc(m.reason)}</p>` : ''}</div></div>`).join('')}</div>`) : ''}
+    ${songs.length ? sec('테마곡', songs.map(s => {
+      const url = safeUrl(s.url), yt = ytId(url);
+      return `<div class="song"><div class="song-row"><div class="disc">♪</div>
+        <div class="txt"><b>${esc(s.title || '제목 없음')}</b>${s.artist.trim() ? `<span>${esc(s.artist)}</span>` : ''}</div>
+        ${url ? `<a class="listen" href="${esc(url)}" target="_blank" rel="noopener">듣기 ↗</a>` : ''}</div>
+        ${s.note.trim() ? `<p>${esc(s.note)}</p>` : ''}
+        ${yt && !common ? `<iframe class="yt no-capture" src="https://www.youtube.com/embed/${yt}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>` : ''}</div>`;
+    }).join('')) : ''}
+    ${ward.length ? sec('옷장', `<div class="ward-grid">${ward.map(w => `<div class="ward">${w.image ? `<img src="${w.image}" alt="">` : ''}${w.caption.trim() ? `<p>${esc(w.caption)}</p>` : ''}</div>`).join('')}</div>`) : ''}`;
 }
 function renderDetail(id){
   const c = getChar(id);
   if (!c){ location.hash = '#/'; return; }
   ui.cid = c.id;
   const list = sortedChars(), idx = list.findIndex(x => x.id === c.id), prev = list[idx - 1], next = list[idx + 1];
-  const prof = c.profile.filter(p => p.v.trim());
-  const rels = c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim());
-  const oc = c.kind !== 'canon';
-  const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
-  const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
-  const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
-
+  const era = c.eras.length ? (eraOf(c, ui.eraSel[c.id]) || eraOf(c, c.mainEra) || c.eras[0]) : null;
   app.innerHTML = `<div id="scope">
     <div class="toolbar">
       <a class="btn ghost" href="#/">← 목록</a><div class="spacer"></div>
@@ -448,37 +601,11 @@ function renderDetail(id){
       <button class="btn" data-act="html">HTML 추출</button>
       <a class="btn primary" href="#/e/${encodeURIComponent(c.id)}">수정</a>
     </div>
-    <article class="sheet" id="capture">
-      <header class="hero ${c.image ? '' : 'noimg'}">
-        ${c.image ? `<div class="hero-img"><img src="${c.image}" alt=""></div>` : ''}
-        <div class="hero-info">
-          <div class="meta"><span>${KIND[c.kind]}</span>${c.origin ? `<span>${esc(c.origin)}</span>` : ''}</div>
-          ${c.subtitle ? `<p class="sub">${esc(c.subtitle)}</p>` : ''}
-          <h1>${esc(c.name)}</h1>
-          ${c.tags.length ? `<div class="tags">${c.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
-          ${c.quote.trim() ? `<blockquote class="quote">“${esc(c.quote)}”</blockquote>` : ''}
-          ${prof.length ? `<dl class="profile">${prof.map(p => `<dt>${esc(p.k)}</dt><dd>${esc(p.v)}</dd>`).join('')}</dl>` : ''}
-        </div>
-      </header>
-      ${c.story.trim() ? sec('서사', `<div class="story">${nl(c.story)}</div>`) : ''}
-      ${rels.length ? sec('인간관계', `<div class="rel-list">${rels.map(r => {
-        const { target, name, image } = relInfo(r);
-        const inner = `<div class="avatar" style="${bgImg(image)}">${image ? '' : esc((name || '?').slice(0, 1))}</div>
-          <div class="txt"><b>${esc(name || '이름 없음')}</b><span>${esc(r.relation)}</span></div>`;
-        return target ? `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>` : `<div class="rel">${inner}</div>`;
-      }).join('')}</div>`) : ''}
-      ${motifs.length ? sec('모티브', `<div class="motif-grid">${motifs.map(m => `<div class="motif">
-        ${m.image ? `<img src="${m.image}" alt="">` : ''}<div class="mt"><b>${esc(m.name)}</b>${m.reason.trim() ? `<p>${esc(m.reason)}</p>` : ''}</div></div>`).join('')}</div>`) : ''}
-      ${songs.length ? sec('테마곡', songs.map(s => {
-        const url = safeUrl(s.url), yt = ytId(url);
-        return `<div class="song"><div class="song-row"><div class="disc">♪</div>
-          <div class="txt"><b>${esc(s.title || '제목 없음')}</b>${s.artist.trim() ? `<span>${esc(s.artist)}</span>` : ''}</div>
-          ${url ? `<a class="listen" href="${esc(url)}" target="_blank" rel="noopener">듣기 ↗</a>` : ''}</div>
-          ${s.note.trim() ? `<p>${esc(s.note)}</p>` : ''}
-          ${yt ? `<iframe class="yt no-capture" src="https://www.youtube.com/embed/${yt}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>` : ''}</div>`;
-      }).join('')) : ''}
-      ${ward.length ? sec('옷장', `<div class="ward-grid">${ward.map(w => `<div class="ward">${w.image ? `<img src="${w.image}" alt="">` : ''}${w.caption.trim() ? `<p>${esc(w.caption)}</p>` : ''}</div>`).join('')}</div>`) : ''}
-    </article>
+    ${era ? `<div class="era-strip">${c.eras.map(e => `<button class="era-btn ${e === era ? 'on' : ''}" data-act="era" data-v="${esc(e.id)}">
+      <span class="era-thumb" style="${bgImg(e.image)}">${e.image ? '' : esc((e.label || '?').slice(0, 1))}</span>
+      <b>${esc(e.label || '이름 없는 시기')}</b>${e.id === c.mainEra ? '<small>대표</small>' : ''}</button>`).join('')}</div>` : ''}
+    <article class="sheet" id="capture">${sheetHtml(c, era, 'page')}</article>
+    ${c.eras.length > 1 ? `<section class="sec"><h2><span class="bar"></span>시기 비교</h2><div class="cmp-scroll">${compareTable(c)}</div></section>` : ''}
     <nav class="pager">
       ${prev ? `<a href="#/c/${encodeURIComponent(prev.id)}"><small>← 이전</small>${esc(prev.name)}</a>` : ''}
       ${next ? `<a class="next" href="#/c/${encodeURIComponent(next.id)}"><small>다음 →</small>${esc(next.name)}</a>` : ''}
@@ -491,27 +618,38 @@ function renderDetail(id){
 /* ---------- edit ---------- */
 const SECTIONS = {
   profile:   { label: '항목 추가',   blank: () => ({ k: '', v: '' }) },
-  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', image: '', relation: '' }), ratio: '1:1' },
+  deeds:     { label: '행적 추가',   blank: () => ({ id: uid(), text: '' }) },
+  eras:      { label: '시기 추가',   blank: () => ({ id: uid(), label: '', image: '', subtitle: '', story: '', deeds: [], profile: [] }), ratio: '3:4' },
+  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', image: '', relation: '', byEra: {} }), ratio: '1:1' },
   motifs:    { label: '모티브 추가', blank: () => ({ id: uid(), name: '', image: '', reason: '' }), ratio: '1:1' },
   songs:     { label: '테마곡 추가', blank: () => ({ id: uid(), title: '', artist: '', url: '', note: '' }) },
   wardrobe:  { label: '옷 추가',     blank: () => ({ id: uid(), image: '', caption: '' }), ratio: '3:4' }
 };
+// path 예: 'relations', 'eras.0.deeds'
+const baseKey = path => path.split('.').filter(x => isNaN(x)).pop();
+const getArr = path => path.split('.').reduce((o, k) => o[k], draft);
 const slot = (sec, i, src, cls) => `<div class="img-slot ${cls} ${src ? 'has' : ''}" role="button" tabindex="0" data-act="pick" data-sec="${sec}" data-i="${i}" style="${bgImg(src)}">${src
   ? `<button class="img-x" data-act="clear-img" data-sec="${sec}" data-i="${i}" aria-label="사진 삭제">✕</button>` : '<span>＋ 사진</span>'}</div>`;
+const tools = (path, i, len, delLabel = '삭제') => `<button class="mini" data-act="move" data-sec="${path}" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>↑</button>
+  <button class="mini" data-act="move" data-sec="${path}" data-i="${i}" data-d="1" ${i === len - 1 ? 'disabled' : ''}>↓</button>
+  <button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}">${delLabel}</button>`;
 
 function itemFields(sec, it, i){
   const p = `${sec}.${i}.`;
   const inp = (key, ph, type = 'text') => `<input class="input" type="${type}" data-bind="${p}${key}" value="${esc(it[key])}" placeholder="${ph}">`;
   if (sec === 'relations'){
     const others = state.characters.filter(c => c.id !== draft.id);
-    const target = it.targetId ? getChar(it.targetId) : null;
-    return `${target ? `<div class="img-slot r1 has linked" style="${bgImg(target.image)}">${target.image ? '' : '🔗'}</div>` : slot(sec, i, it.image, 'r1')}
+    const target = it.targetId ? getChar(it.targetId) : null, timg = target ? repImage(target) : '';
+    const eras = draft.eras;
+    return `${target ? `<div class="img-slot r1 has linked" style="${bgImg(timg)}">${timg ? '' : '🔗'}</div>` : slot(sec, i, it.image, 'r1')}
       <div class="fields">
         ${others.length ? `<select class="input" data-bind="${p}targetId" data-rerender="relations">
           <option value="">직접 입력 (목록에 없는 캐릭터)</option>
           ${others.map(o => `<option value="${esc(o.id)}" ${o.id === it.targetId ? 'selected' : ''}>목록: ${esc(o.name || '이름 없음')}${o.origin ? ` (${esc(o.origin)})` : ''}</option>`).join('')}</select>` : ''}
         ${target ? '' : inp('name', '상대 이름')}
-        ${inp('relation', '한 줄 관계 (예: 소꿉친구. 서로 못 잡아먹어 안달)')}
+        ${inp('relation', eras.length ? '공통 관계 (모든 시기에 적용)' : '한 줄 관계 (예: 소꿉친구. 서로 못 잡아먹어 안달)')}
+        ${eras.length ? `<div class="era-rel"><div class="sub-h">시기별 관계 <small>비우면 공통 관계를 따라가요</small></div>
+          ${eras.map((e, j) => `<label class="era-rel-row"><span>${esc(e.label || `시기 ${j + 1}`)}</span><input class="input" data-bind="${p}byEra.${e.id}" value="${esc(it.byEra[e.id] || '')}" placeholder="이 시기의 관계"></label>`).join('')}</div>` : ''}
       </div>`;
   }
   if (sec === 'motifs') return `${slot(sec, i, it.image, 'r1')}<div class="fields">${inp('name', '모티브 (인물·동물·작품·물건 등)')}${inp('reason', '닮은 점 한 줄')}</div>`;
@@ -519,19 +657,43 @@ function itemFields(sec, it, i){
   if (sec === 'wardrobe') return `${slot(sec, i, it.image, 'r34')}<div class="fields">${inp('caption', '메모 (예: 외출복, 겨울 코디)')}</div>`;
   return '';
 }
-function editList(sec){
-  const arr = draft[sec], add = `<button class="btn add" data-act="add" data-sec="${sec}">＋ ${SECTIONS[sec].label}</button>`;
-  if (sec === 'profile') return arr.map((p, i) => `<div class="kv">
-      <input class="input" data-bind="profile.${i}.k" value="${esc(p.k)}" placeholder="항목">
-      <input class="input" data-bind="profile.${i}.v" value="${esc(p.v)}" placeholder="내용">
-      <button class="mini danger" data-act="del" data-sec="profile" data-i="${i}" aria-label="삭제">✕</button></div>`).join('') + add;
-  return arr.map((it, i) => `<div class="item-edit">${itemFields(sec, it, i)}<div class="item-tools">
-      <button class="mini" data-act="move" data-sec="${sec}" data-i="${i}" data-d="-1" ${i === 0 ? 'disabled' : ''}>↑</button>
-      <button class="mini" data-act="move" data-sec="${sec}" data-i="${i}" data-d="1" ${i === arr.length - 1 ? 'disabled' : ''}>↓</button>
-      <button class="mini danger" data-act="del" data-sec="${sec}" data-i="${i}">삭제</button></div></div>`).join('') + add;
+function eraEdit(e, i, len){
+  const p = `eras.${i}`;
+  return `<div class="era-edit">
+    <div class="era-top">${slot('eras', i, e.image, 'r34')}
+      <div class="fields">
+        <input class="input era-label" data-bind="${p}.label" data-relabel value="${esc(e.label)}" placeholder="시기 이름 (예: 학생 시절, 본편, 10년 후)">
+        <input class="input" data-bind="${p}.subtitle" value="${esc(e.subtitle)}" placeholder="이 시기의 한 줄 소개 (비우면 공통)">
+        <label class="check sm"><input type="radio" name="mainEra" data-act="main-era" data-v="${esc(e.id)}" ${draft.mainEra === e.id ? 'checked' : ''}> 대표 시기 (목록 사진으로 사용)</label>
+      </div></div>
+    <div class="sub-h">바뀌는 프로필 <small>공통과 다른 항목만 적으세요</small></div>
+    <div id="sec-${p}.profile">${editList(p + '.profile')}</div>
+    <div class="sub-h">이 시기의 서사</div>
+    <textarea class="input" data-bind="${p}.story" rows="6" placeholder="이 시기에 있었던 이야기">${esc(e.story)}</textarea>
+    <div class="sub-h">이 시기의 행적</div>
+    <div id="sec-${p}.deeds">${editList(p + '.deeds')}</div>
+    <div class="item-tools" style="margin-top:10px">${tools('eras', i, len, '시기 삭제')}</div>
+  </div>`;
 }
-const rerender = s => { const el = $('#sec-' + s); if (el) el.innerHTML = editList(s); };
+function editList(path){
+  const key = baseKey(path), arr = getArr(path), len = arr.length;
+  const add = `<button class="btn add" data-act="add" data-sec="${path}">＋ ${SECTIONS[key].label}</button>`;
+  if (key === 'profile'){
+    const isEra = path !== 'profile';
+    return arr.map((p, i) => `<div class="kv">
+      <input class="input" data-bind="${path}.${i}.k" value="${esc(p.k)}" placeholder="${isEra ? '항목 (예: 나이)' : '항목'}" ${isEra ? 'list="profKeys"' : ''}>
+      <input class="input" data-bind="${path}.${i}.v" value="${esc(p.v)}" placeholder="${isEra ? '이 시기의 값' : '내용'}">
+      <button class="mini danger" data-act="del" data-sec="${path}" data-i="${i}" aria-label="삭제">✕</button></div>`).join('') + add;
+  }
+  if (key === 'deeds') return arr.map((d, i) => `<div class="kv deed"><span class="deed-n">${i + 1}</span>
+      <input class="input" data-bind="${path}.${i}.text" value="${esc(d.text)}" placeholder="예: 고향을 떠남">
+      <div class="deed-tools">${tools(path, i, len, '✕')}</div></div>`).join('') + add;
+  if (key === 'eras') return arr.map((e, i) => eraEdit(e, i, len)).join('') + add;
+  return arr.map((it, i) => `<div class="item-edit">${itemFields(path, it, i)}<div class="item-tools">${tools(path, i, len)}</div></div>`).join('') + add;
+}
+const rerender = s => { const el = document.getElementById('sec-' + s); if (el) el.innerHTML = editList(s); };
 const mainImg = () => slot('main', 0, draft.image, 'r34 big');
+const refreshKeys = () => { const d = $('#profKeys'); if (d) d.innerHTML = [...new Set(draft.profile.map(p => p.k.trim()).filter(Boolean))].map(k => `<option value="${esc(k)}">`).join(''); };
 
 function renderEdit(id){
   if (id){ const c = getChar(id); if (!c){ location.hash = '#/'; return; } draft = clone(c); isNew = false; }
@@ -564,8 +726,10 @@ function renderEdit(id){
         <div class="color-row"><input type="color" id="cColor" value="${colorOf(draft)}"><span class="muted" id="cColorLabel">${draft.color || '사이트 테마 색 사용 중'}</span>
         <button class="btn sm ghost" data-act="color-reset">테마 색으로</button></div></div>`)}
     ${card('프로필 항목', '나이, 키, 생일, 종족, MBTI… 자유롭게 추가하세요. 원작이 같은 캐릭터들은 항목이 자동으로 맞춰져요.', `<div id="sec-profile">${editList('profile')}</div>`)}
-    ${card('서사', '', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
-    ${card('인간관계', '상대와 무슨 관계인지 한 줄로. 내 자캐를 고르면 서로 페이지로 이동할 수 있어요.', `<div id="sec-relations">${editList('relations')}</div>`)}
+    ${card('시기 (버전)', '같은 캐릭터의 시기별 모습을 나눠 정리해요. 시기마다 사진, 한 줄 소개, 서사, 행적을 따로 쓰고, 프로필은 바뀌는 항목만 적으면 돼요. 시기가 없으면 비워두세요.', `<div id="sec-eras">${editList('eras')}</div><datalist id="profKeys"></datalist>`)}
+    ${card('서사', '시기를 나눴다면 여기엔 모든 시기에 공통인 내용을 적어요.', `<textarea class="input" data-bind="story" rows="10" placeholder="이 아이의 이야기를 들려주세요.">${esc(draft.story)}</textarea>`)}
+    ${card('행적', '있었던 일을 한 줄씩 순서대로 적어요.', `<div id="sec-deeds">${editList('deeds')}</div>`)}
+    ${card('인간관계', '상대와 무슨 관계인지 한 줄로. 목록에 있는 캐릭터를 고르면 서로 페이지로 이동할 수 있어요. 시기가 있으면 시기별로 관계를 다르게 적을 수 있어요.', `<div id="sec-relations">${editList('relations')}</div>`)}
     <div id="oc-only" style="${draft.kind === 'canon' ? 'display:none' : ''}">
     ${card('모티브', '모티브가 된 대상과, 어디가 닮았는지 한 줄로.', `<div id="sec-motifs">${editList('motifs')}</div>`)}
     ${card('테마곡', '유튜브 링크를 넣으면 페이지에서 바로 재생돼요.', `<div id="sec-songs">${editList('songs')}</div>`)}
@@ -574,10 +738,11 @@ function renderEdit(id){
     <div class="save-bottom"><button class="btn primary big" data-act="save">저장하기</button></div>
   </div>`;
   applyVars($('#scope'), colorOf(draft));
+  refreshKeys();
   $('#originInput').onchange = () => {
     const o = draft.origin.trim(); if (!o) return;
     const n = addMissingKeys(draft.profile, originKeys(o, draft.id));
-    if (n){ dirty = true; rerender('profile'); toast(`'${o}' 프로필 항목 ${n}개를 불러왔어요`); }
+    if (n){ dirty = true; rerender('profile'); refreshKeys(); toast(`'${o}' 프로필 항목 ${n}개를 불러왔어요`); }
   };
   $('#cColor').oninput = e => { draft.color = e.target.value; dirty = true; $('#cColorLabel').textContent = draft.color; applyVars($('#scope'), draft.color); };
 }
@@ -585,6 +750,10 @@ function saveDraft(){
   draft.name = draft.name.trim();
   if (!draft.name){ toast('이름을 입력해 주세요'); const n = $('[data-bind="name"]'); n && n.focus(); return; }
   draft.origin = draft.origin.trim();
+  draft.eras.forEach((e, i) => { e.label = e.label.trim() || `시기 ${i + 1}`; });
+  const ids = new Set(draft.eras.map(e => e.id));
+  if (!ids.has(draft.mainEra)) draft.mainEra = '';
+  draft.relations.forEach(r => { for (const k in r.byEra) if (!ids.has(k) || !String(r.byEra[k]).trim()) delete r.byEra[k]; });
   draft.updated = Date.now();
   const i = state.characters.findIndex(c => c.id === draft.id);
   if (i >= 0) state.characters[i] = draft; else state.characters.push(draft);
@@ -607,14 +776,22 @@ app.addEventListener('input', e => {
   setPath(draft, b, t.value); dirty = true;
   if (t.dataset.rerender) rerender(t.dataset.rerender);
 });
+app.addEventListener('change', e => {
+  if (!draft) return;
+  if (e.target.hasAttribute('data-relabel')) rerender('relations');
+  if (/^profile\.\d+\.k$/.test(e.target.dataset.bind || '')) refreshKeys();
+});
 app.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('img-slot')){ e.preventDefault(); e.target.click(); } });
 app.addEventListener('click', async e => {
   const t = e.target.closest('[data-act]'); if (!t || t.disabled) return;
   const act = t.dataset.act, s = t.dataset.sec, i = +t.dataset.i;
+  const after = path => { rerender(path); if (path === 'eras') rerender('relations'); };
   switch (act){
     case 'filter': ui[t.dataset.k] = ui[t.dataset.k] === t.dataset.v ? '' : t.dataset.v; drawFilters(); drawGrid(); break;
     case 'list-html': { const l = filteredChars(); if (!l.length) return toast('담을 캐릭터가 없어요'); openExport({ title: state.settings.title, build: w => buildListExportHtml(l, w), file: state.settings.title || '캐릭터 목록' }); break; }
     case 'kind': draft.kind = t.dataset.v; dirty = true; t.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === t)); $('#oc-only').style.display = draft.kind === 'canon' ? 'none' : ''; break;
+    case 'era': ui.eraSel[ui.cid] = t.dataset.v; { const y = window.scrollY; renderDetail(ui.cid); window.scrollTo(0, y); } break;
+    case 'main-era': draft.mainEra = t.dataset.v; dirty = true; break;
     case 'backup': exportJson(); renderList(); break;
     case 'import': importJson(); break;
     case 'png': savePng(getChar(ui.cid)); break;
@@ -625,26 +802,27 @@ app.addEventListener('click', async e => {
     case 'cancel': location.hash = isNew ? '#/' : '#/c/' + encodeURIComponent(draft.id); break;
     case 'save': saveDraft(); break;
     case 'add': {
-      draft[s].push(SECTIONS[s].blank()); dirty = true; rerender(s);
-      const items = $('#sec-' + s).querySelectorAll('.item-edit, .kv'); const last = items[items.length - 1];
-      const f = last && last.querySelector('input:not([type=hidden])'); f && f.focus(); break;
+      getArr(s).push(SECTIONS[baseKey(s)].blank()); dirty = true; after(s);
+      const box = document.getElementById('sec-' + s), items = box ? [...box.children].filter(x => !x.matches('.add')) : [];
+      const f = items.length && items[items.length - 1].querySelector('input[type=text], input:not([type])'); f && f.focus(); break;
     }
     case 'del': {
-      const it = draft[s][i];
-      const hasContent = Object.entries(it).some(([k, v]) => k !== 'id' && String(v).trim());
-      if (s !== 'profile' && hasContent && !confirm('이 항목을 삭제할까요?')) return;
-      draft[s].splice(i, 1); dirty = true; rerender(s); break;
+      const a = getArr(s), it = a[i], key = baseKey(s);
+      const hasContent = Object.entries(it).some(([k, v]) => k !== 'id' && (Array.isArray(v) ? v.length : String(v).trim()));
+      if (key !== 'profile' && key !== 'deeds' && hasContent && !confirm(key === 'eras' ? '이 시기를 삭제할까요? 시기 안의 내용도 함께 지워져요.' : '이 항목을 삭제할까요?')) return;
+      if (key === 'eras' && draft.mainEra === it.id) draft.mainEra = '';
+      a.splice(i, 1); dirty = true; after(s); break;
     }
-    case 'move': { const a = draft[s], j = i + (+t.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; dirty = true; rerender(s); break; }
+    case 'move': { const a = getArr(s), j = i + (+t.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; dirty = true; after(s); break; }
     case 'pick': {
-      const d = draft, src = await pickImage(s === 'main' ? '3:4' : SECTIONS[s].ratio);
+      const d = draft, src = await pickImage(s === 'main' ? '3:4' : SECTIONS[baseKey(s)].ratio);
       if (!src || d !== draft) return;
       if (s === 'main'){ draft.image = src; $('#main-img').innerHTML = mainImg(); }
-      else if (draft[s][i]){ draft[s][i].image = src; rerender(s); }
+      else { const it = getArr(s)[i]; if (it){ it.image = src; after(s); } }
       dirty = true; break;
     }
     case 'clear-img':
-      if (s === 'main'){ draft.image = ''; $('#main-img').innerHTML = mainImg(); } else { draft[s][i].image = ''; rerender(s); }
+      if (s === 'main'){ draft.image = ''; $('#main-img').innerHTML = mainImg(); } else { getArr(s)[i].image = ''; after(s); }
       dirty = true; break;
     case 'color-reset':
       draft.color = ''; dirty = true; $('#cColor').value = state.settings.theme;
@@ -662,7 +840,7 @@ function deleteChar(id){
   const c = getChar(id); if (!c) return;
   if (!confirm(`'${c.name}'을(를) 삭제할까요? 되돌릴 수 없어요.`)) return;
   state.characters = state.characters.filter(x => x.id !== id);
-  state.characters.forEach(o => o.relations.forEach(r => { if (r.targetId === id){ r.targetId = ''; r.name = r.name || c.name; r.image = r.image || c.image; } }));
+  state.characters.forEach(o => o.relations.forEach(r => { if (r.targetId === id){ r.targetId = ''; r.name = r.name || c.name; r.image = r.image || repImage(c); } }));
   save(); toast('삭제했어요'); location.hash = '#/';
 }
 
@@ -771,8 +949,33 @@ async function capturePng(el, fileName, maxScale = 2){
   } catch (err){ console.error(err); toast('이미지 생성에 실패했어요'); return false; }
 }
 async function savePng(c){
-  const el = $('#capture'); if (!el || !c) return;
-  await capturePng(el, `${c.name || 'character'}.png`);
+  if (!c) return;
+  if (!c.eras.length){ const el = $('#capture'); if (el) await capturePng(el, `${c.name || 'character'}.png`); return; }
+  const m = openModal(`<h3>PNG 저장</h3>
+    <p class="hint">공통 사항과 시기별로 달라지는 사항을 나눠서 저장할 수 있어요. 달라지는 사항은 비교하기 쉽게 표로 저장돼요.</p>
+    <div class="btn-col">
+      <button class="btn" data-p="common">공통 사항만</button>
+      <button class="btn" data-p="table">시기별 비교표만</button>
+      <button class="btn primary" data-p="both">둘 다 한 장에</button>
+    </div>`);
+  m.el.addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; m.close(); eraPng(c, b.dataset.p); });
+}
+async function eraPng(c, mode){
+  const tableW = 140 + c.eras.length * 250;
+  const W = mode === 'common' ? 760 : Math.max(760, tableW + 48);
+  const box = document.createElement('div');
+  box.className = 'png-box'; box.style.width = W + 'px';
+  let h = '';
+  if (mode !== 'table') h += `<div class="sheet">${sheetHtml(c, null, 'common')}</div>`;
+  if (mode !== 'common') h += `<div class="png-cmp">${mode === 'table'
+    ? `<div class="pc-head"><div class="pc-name">${esc(c.name)}</div><div class="pc-sub">시기별 비교${c.origin ? ' · ' + esc(c.origin) : ''}</div></div>`
+    : `<h2 class="pc-h2"><span class="bar"></span>시기별 비교</h2>`}${compareTable(c)}</div>`;
+  box.innerHTML = h;
+  applyVars(box, colorOf(c));
+  window.scrollTo(0, 0);
+  document.body.append(box);
+  await capturePng(box, `${c.name || 'character'}-${{ common: '공통', table: '시기비교', both: '전체' }[mode]}.png`, 1.5);
+  box.remove();
 }
 async function groupPng(){
   const list = filteredChars();
@@ -785,7 +988,7 @@ async function groupPng(){
   box.innerHTML = `<div class="gc-head"><div class="gc-title">${esc(state.settings.title)}</div>
       <div class="gc-sub">${filterLabel() ? esc(filterLabel()) + ' · ' : ''}${n}명</div></div>
     <div class="gc-grid" style="grid-template-columns:repeat(${cols},1fr)">${list.map(c => `<div class="gc-card">
-      <div class="gc-thumb" style="${bgImg(c.image)}">${c.image ? '' : `<span>${esc((c.name || '?').slice(0, 1))}</span>`}</div>
+      <div class="gc-thumb" style="${bgImg(repImage(c))}">${repImage(c) ? '' : `<span>${esc((c.name || '?').slice(0, 1))}</span>`}</div>
       <div class="gc-info" style="border-top-color:${colorOf(c)}"><b>${esc(c.name || '이름 없음')}</b>${(c.origin || c.subtitle) ? `<span>${esc([c.origin, c.subtitle].filter(Boolean).join(' · '))}</span>` : ''}</div></div>`).join('')}</div>`;
   window.scrollTo(0, 0);
   document.body.append(box);
@@ -799,14 +1002,25 @@ function buildExportHtml(c, withImg){
   const I = src => { src = safeImg(src); return !src ? '' : (withImg ? src : 'IMAGE_URL'); };
   const card = 'background:#ffffff;border:1px solid #ebe8f2;border-radius:16px;';
   const H2 = s => `<h2 style="font-size:19px;margin:34px 0 12px;padding:0 0 0 12px;border-left:6px solid ${t};line-height:1.3;color:#1d1b26;">${s}</h2>`;
-  const prof = c.profile.filter(p => p.v.trim());
-  const rels = c.relations.filter(r => r.targetId || r.name.trim() || r.relation.trim());
+  const H3 = s => `<div style="font-size:14px;font-weight:800;color:${tt};margin:14px 0 6px;">${s}</div>`;
+  const table = rows => `<table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;${card}overflow:hidden;font-size:14px;">${rows.map((p, i) => {
+    const bd = i < rows.length - 1 ? 'border-bottom:1px solid #f0edf5;' : '';
+    return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${esc(p.v)}</td></tr>`; }).join('')}</table>`;
+  const deeds = a => `<ol style="margin:0;padding:12px 16px 12px 36px;${card}">${a.map(d => `<li style="margin:2px 0;">${esc(d.text)}</li>`).join('')}</ol>`;
+  const avatar = (src, name) => src ? `<img src="${src}" alt="" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center 20%;flex:none;">`
+    : `<div style="width:50px;height:50px;border-radius:50%;background:${soft};color:${tt};font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;">${esc((name || '?').slice(0, 1))}</div>`;
+  const relRow = (r, text) => { const { name, image } = relInfo(r);
+    return `<div style="display:flex;align-items:center;gap:12px;${card}padding:10px 12px;margin-bottom:8px;">${avatar(I(image), name)}<div><b>${esc(name)}</b><div style="color:#6b6880;font-size:14px;line-height:1.5;">${esc(text)}</div></div></div>`; };
+  const hasEras = c.eras.length > 0;
+  const prof = mergedProfile(c, null);
+  const rels = relList(c, null);
+  const cd = liveDeeds(c.deeds);
   const oc = c.kind !== 'canon';
   const motifs = oc ? c.motifs.filter(m => m.name.trim() || m.image || m.reason.trim()) : [];
   const songs = oc ? c.songs.filter(s => s.title.trim() || s.url.trim()) : [];
   const ward = oc ? c.wardrobe.filter(w => w.image || w.caption.trim()) : [];
   let h = `<div style="max-width:720px;margin:0 auto;padding:22px;font-family:Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:#1d1b26;line-height:1.7;background:#faf9fc;border-radius:24px;word-break:keep-all;box-sizing:border-box;">`;
-  const img = I(c.image);
+  const img = I(repImage(c));
   if (img) h += `<div style="text-align:center;"><img src="${img}" alt="${esc(c.name)}" style="max-width:320px;width:100%;height:auto;border-radius:22px;display:inline-block;"></div>`;
   h += `<div style="text-align:center;margin-top:16px;">`;
   h += `<div style="margin-bottom:4px;">${[KIND[c.kind], c.origin].filter(Boolean).map(x => `<span style="display:inline-block;margin:2px;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid ${soft2};color:${tt};background:#fff;">${esc(x)}</span>`).join('')}</div>`;
@@ -815,16 +1029,25 @@ function buildExportHtml(c, withImg){
   if (c.tags.length) h += `<div style="margin-top:8px;">${c.tags.map(x => `<span style="display:inline-block;margin:2px;font-size:12px;padding:2px 10px;border-radius:999px;background:${soft2};color:${tt};font-weight:700;">#${esc(x)}</span>`).join('')}</div>`;
   h += `</div>`;
   if (c.quote.trim()) h += `<div style="margin:18px 0;padding:12px 16px;background:${soft};border-left:4px solid ${t};border-radius:0 14px 14px 0;">“${esc(c.quote)}”</div>`;
-  if (prof.length) h += `<table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;${card}overflow:hidden;font-size:14px;">${prof.map((p, i) => {
-    const bd = i < prof.length - 1 ? 'border-bottom:1px solid #f0edf5;' : '';
-    return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${esc(p.v)}</td></tr>`; }).join('')}</table>`;
-  if (c.story.trim()) h += H2('서사') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
-  if (rels.length) h += H2('인간관계') + rels.map(r => {
-    const { name, image } = relInfo(r), src = I(image);
-    const av = src ? `<img src="${src}" alt="" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center 20%;flex:none;">`
-      : `<div style="width:50px;height:50px;border-radius:50%;background:${soft};color:${tt};font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;">${esc((name || '?').slice(0, 1))}</div>`;
-    return `<div style="display:flex;align-items:center;gap:12px;${card}padding:10px 12px;margin-bottom:8px;">${av}<div><b>${esc(name)}</b><div style="color:#6b6880;font-size:14px;line-height:1.5;">${esc(r.relation)}</div></div></div>`;
-  }).join('');
+  if (prof.length) h += table(prof);
+  if (c.story.trim()) h += H2(hasEras ? '서사 (공통)' : '서사') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
+  if (cd.length) h += H2(hasEras ? '행적 (공통)' : '행적') + deeds(cd);
+  if (rels.length) h += H2(hasEras ? '인간관계 (공통)' : '인간관계') + rels.map(({ r, text }) => relRow(r, text)).join('');
+  if (hasEras){
+    h += H2('시기별');
+    h += c.eras.map(e => {
+      const src = I(e.image), changed = mergedProfile(c, e).filter(p => p.changed);
+      const ed = liveDeeds(e.deeds), er = c.relations.filter(r => (r.byEra[e.id] || '').trim());
+      let b = `<div style="${card}overflow:hidden;margin-bottom:16px;"><div style="background:${t};color:${on};padding:10px 16px;font-weight:800;font-size:16px;">${esc(e.label)}${e.id === c.mainEra ? ' ★' : ''}</div><div style="padding:14px 16px;">`;
+      if (src) b += `<div style="text-align:center;"><img src="${src}" alt="" style="max-width:240px;width:100%;height:auto;border-radius:16px;display:inline-block;"></div>`;
+      if (e.subtitle.trim()) b += `<div style="text-align:center;color:${tt};font-weight:700;margin-top:8px;">${esc(e.subtitle)}</div>`;
+      if (changed.length) b += H3('바뀐 프로필') + table(changed).replace('margin-top:14px;', '');
+      if (e.story.trim()) b += H3('서사') + `<div style="line-height:1.8;">${nl(e.story)}</div>`;
+      if (ed.length) b += H3('행적') + deeds(ed);
+      if (er.length) b += H3('인간관계') + er.map(r => relRow(r, r.byEra[e.id])).join('');
+      return b + `</div></div>`;
+    }).join('');
+  }
   if (motifs.length) h += H2('모티브') + `<div style="display:flex;flex-wrap:wrap;gap:12px;">${motifs.map(m => {
     const src = I(m.image);
     return `<div style="width:calc(50% - 6px);box-sizing:border-box;${card}overflow:hidden;">${src ? `<img src="${src}" alt="" style="width:100%;height:auto;display:block;">` : ''}<div style="padding:10px 12px;"><b>${esc(m.name)}</b>${m.reason.trim() ? `<div style="color:#6b6880;font-size:13px;line-height:1.5;margin-top:2px;">${esc(m.reason)}</div>` : ''}</div></div>`;
@@ -852,7 +1075,7 @@ function buildListExportHtml(list, withImg){
 <div style="text-align:center;padding:22px 0 16px;"><div style="font-size:28px;font-weight:800;color:${tt};">${esc(state.settings.title)}</div><div style="color:#6b6880;font-size:14px;">${label ? esc(label) + ' · ' : ''}${list.length}명</div></div>
 <div style="display:flex;flex-wrap:wrap;gap:10px;">`;
   h += list.map((c, i) => {
-    const src = I(c.image), col = colorOf(c);
+    const src = I(repImage(c)), col = colorOf(c);
     const thumb = src ? `<img src="${src}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center 20%;display:block;">`
       : `<div style="width:100%;aspect-ratio:1/1;background:${mix(col, '#ffffff', .12)};color:${mix(col, '#000000', .7)};font-size:36px;font-weight:800;display:flex;align-items:center;justify-content:center;">${esc((c.name || '?').slice(0, 1))}</div>`;
     return `<a href="#oc-${i + 1}" style="width:calc(33.33% - 7px);min-width:120px;flex-grow:1;max-width:calc(50% - 5px);box-sizing:border-box;background:#fff;border:1px solid #ebe8f2;border-radius:16px;overflow:hidden;text-decoration:none;color:#1d1b26;">${thumb}
