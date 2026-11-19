@@ -116,7 +116,7 @@ select.input{appearance:none;-webkit-appearance:none;background-image:linear-gra
 .sec{margin-top:30px}
 .sec h2{font-size:18px;margin:0 0 12px;display:flex;align-items:center;gap:9px}
 .bar{display:inline-block;width:6px;height:20px;border-radius:3px;background:var(--theme)}
-.story{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;line-height:1.8}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;line-height:1.8;text-align:justify;word-break:break-all}
 .rel-list{display:grid;gap:8px}
 @media(min-width:620px){.rel-list{grid-template-columns:1fr 1fr}}
 .rel{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
@@ -673,7 +673,7 @@ const eraDeeds = (c, e) => liveDeeds(c.deeds).filter(d => d.eraId === e.id);
 // 1:1 목록 사진: 대표 사진 + 사용자가 맞춘 세로 위치
 const thumbBg = c => { const src = repImage(c); return src ? `background-image:url('${src}');background-position:center ${c.thumbY ?? 20}%` : ''; };
 const pic = (src, cls = '') => `<div class="pic34 ${cls}" style="${bgImg(src)}"></div>`;
-const dotList = a => `<div class="dots">${a.map(d => `<div class="dot-item"><span class="dot"></span><span>${esc(d.text)}</span></div>`).join('')}</div>`;
+const dotList = a => `<div class="dots">${a.map(d => `<div class="dot-item"><span class="dot"></span><span>${nl(d.text)}</span></div>`).join('')}</div>`;
 // 행적 타임라인: 같은 시기가 이어지는 부분끼리 묶고, 시기가 바뀔 때마다 시기 이름을 표시
 function timelineHtml(c, deeds, chips){
   const rows = [];
@@ -681,9 +681,9 @@ function timelineHtml(c, deeds, chips){
   deeds.forEach(d => {
     if (chips && d.eraId !== cur){
       cur = d.eraId; const e = eraOf(c, d.eraId);
-      rows.push(`<div class="tl-row head"><span class="tl-line"></span><span class="tl-node big"></span><span class="tl-chip ${e ? '' : 'plain'}">${e ? esc(e.label) : '공통'}</span></div>`);
+      rows.push(`<div class="tl-row head"><span class="tl-line"></span><span class="tl-node big"></span><span class="tl-chip ${e ? '' : 'plain'}">${e ? esc(e.label) : '원작'}</span></div>`);
     }
-    rows.push(`<div class="tl-row"><span class="tl-line"></span><span class="tl-node"></span><span>${esc(d.text)}</span></div>`);
+    rows.push(`<div class="tl-row"><span class="tl-line"></span><span class="tl-node"></span><span>${nl(d.text)}</span></div>`);
   });
   if (rows.length){
     rows[0] = rows[0].replace('class="tl-row', 'class="tl-row first');
@@ -919,8 +919,8 @@ function editList(path){
   if (key === 'deeds'){
     const eras = draft.eras;
     return arr.map((d, i) => `<div class="deed-edit ${eras.length ? 'with-era' : ''} ${isPicked(path, d) ? 'picked' : ''}">
-      ${eras.length ? `<select class="input deed-sel" data-bind="${path}.${i}.eraId"><option value="">공통</option>${eras.map((e, j) => `<option value="${esc(e.id)}" ${d.eraId === e.id ? 'selected' : ''}>${esc(e.label || `시기 ${j + 1}`)}${e.au ? ' (AU)' : ''}</option>`).join('')}</select>` : ''}
-      <input class="input deed-txt" data-bind="${path}.${i}.text" value="${esc(d.text)}" placeholder="예: 고향을 떠남">
+      ${eras.length ? `<select class="input deed-sel" data-bind="${path}.${i}.eraId"><option value="">원작</option>${eras.map((e, j) => `<option value="${esc(e.id)}" ${d.eraId === e.id ? 'selected' : ''}>${esc(e.label || `시기 ${j + 1}`)}${e.au ? ' (AU)' : ''}</option>`).join('')}</select>` : ''}
+      <textarea class="input grow deed-txt" rows="1" data-bind="${path}.${i}.text" placeholder="예: 고향을 떠남 (엔터로 줄바꿈)">${esc(d.text)}</textarea>
       <div class="deed-tools">${tools(path, i, len, '✕')}</div></div>`).join('') + selBar(path) + add;
   }
   if (key === 'eras') return arr.map((e, i) => eraEdit(e, i, len)).join('') + add;
@@ -938,7 +938,7 @@ function renderEdit(id){
     draft = blankChar(); isNew = true;
     // 목록에서 원작/구분 필터를 고른 상태였다면 미리 채워줌
     if (ui.kind) draft.kind = ui.kind;
-    if (ui.origin && ui.origin !== NO_ORIGIN){ draft.origin = ui.origin; const keys = originKeys(ui.origin, draft.id); if (keys.length) draft.profile = keys.map(k => ({ k, v: '' })); }
+    if (ui.origin && ui.origin !== NO_ORIGIN) draft.origin = ui.origin;
   }
   dirty = false; picks = new Map();
   const card = (title, hint, body) => `<section class="card"><h2><span class="bar"></span>${title}</h2>${hint ? `<p class="hint">${hint}</p>` : ''}${body}</section>`;
@@ -985,9 +985,6 @@ function renderEdit(id){
   requestAnimationFrame(() => autosizeAll());
   $('#originInput').onchange = () => {
     rerender('relations');
-    const o = draft.origin.trim(); if (!o) return;
-    const n = addMissingKeys(draft.profile, originKeys(o, draft.id));
-    if (n){ dirty = true; rerender('profile'); refreshKeys(); toast(`'${o}' 프로필 항목 ${n}개를 불러왔어요`); }
   };
   $('#cColor').oninput = e => { draft.color = e.target.value; dirty = true; $('#cColorLabel').textContent = draft.color; applyVars($('#scope'), draft.color); };
 }
@@ -1050,13 +1047,7 @@ function saveDraft(){
   draft.updated = Date.now();
   const i = state.characters.findIndex(c => c.id === draft.id);
   if (i >= 0) state.characters[i] = draft; else state.characters.push(draft);
-  // 같은 원작 캐릭터들에게 새 프로필 항목을 빈 칸으로 추가
-  let synced = 0;
-  if (draft.origin){
-    const keys = draft.profile.map(p => p.k.trim()).filter(Boolean);
-    state.characters.forEach(c => { if (c.id !== draft.id && c.origin.trim() === draft.origin && addMissingKeys(c.profile, keys)) synced++; });
-  }
-  save(); dirty = false; toast(synced ? `저장했어요 · 같은 원작 ${synced}명에게 항목을 추가했어요` : '저장했어요', synced ? 3000 : 2000);
+  save(); dirty = false; toast('저장했어요');
   location.hash = '#/c/' + encodeURIComponent(draft.id);
 }
 
@@ -1386,16 +1377,16 @@ function buildExportHtml(c, withImg){
   const table = rows => `<table style="width:100%;border-collapse:separate;border-spacing:0;margin-top:14px;${card}overflow:hidden;font-size:14px;">${rows.map((p, i) => {
     const bd = i < rows.length - 1 ? 'border-bottom:1px solid #f0edf5;' : '';
     return `<tr><th style="text-align:left;padding:9px 14px;color:${tt};width:32%;background:${soft};${bd}">${esc(p.k)}</th><td style="padding:9px 14px;${bd}">${nl(p.v)}</td></tr>`; }).join('')}</table>`;
-  const dots = a => `<div style="${card}padding:10px 14px;">${a.map(d => `<div style="display:flex;gap:8px;margin:3px 0;"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:${t};margin-top:10px;"></span><span>${esc(d.text)}</span></div>`).join('')}</div>`;
+  const dots = a => `<div style="${card}padding:10px 14px;">${a.map(d => `<div style="display:flex;gap:8px;margin:3px 0;"><span style="flex:none;width:6px;height:6px;border-radius:50%;background:${t};margin-top:10px;"></span><span>${nl(d.text)}</span></div>`).join('')}</div>`;
   const timeline = (ds, chips) => {
     const rows = []; let cur = null;
     ds.forEach(d => {
       if (chips && d.eraId !== cur){
         cur = d.eraId; const e = eraOf(c, d.eraId);
         rows.push({ head: true, node: `<span style="position:absolute;left:-1px;top:4px;width:14px;height:14px;box-sizing:border-box;border-radius:50%;background:${t};z-index:1;"></span>`,
-          body: `<span style="display:inline-block;font-size:12px;font-weight:800;padding:1px 10px;border-radius:999px;line-height:1.6;${e ? `background:${t};color:${on};` : `background:${soft2};color:${tt};`}">${e ? esc(e.label) : '공통'}</span>` });
+          body: `<span style="display:inline-block;font-size:12px;font-weight:800;padding:1px 10px;border-radius:999px;line-height:1.6;${e ? `background:${t};color:${on};` : `background:${soft2};color:${tt};`}">${e ? esc(e.label) : '원작'}</span>` });
       }
-      rows.push({ node: `<span style="position:absolute;left:1px;top:7px;width:10px;height:10px;box-sizing:border-box;border-radius:50%;background:#fff;border:2px solid ${t};z-index:1;"></span>`, body: esc(d.text) });
+      rows.push({ node: `<span style="position:absolute;left:1px;top:7px;width:10px;height:10px;box-sizing:border-box;border-radius:50%;background:#fff;border:2px solid ${t};z-index:1;"></span>`, body: nl(d.text) });
     });
     return `<div style="${card}padding:14px 16px 4px;">${rows.map((r, i) => {
       const first = i === 0, last = i === rows.length - 1;
@@ -1427,7 +1418,7 @@ function buildExportHtml(c, withImg){
   h += `</div>`;
   if (c.quote.trim()) h += `<div style="text-align:center;margin:10px 0 0;font-size:14px;color:${tt};font-style:italic;">${nl(c.quote.trim())}</div>`;
   if (prof.length) h += table(prof);
-  if (c.story.trim()) h += H2(hasEras ? '상세 (공통)' : '상세') + `<div style="${card}padding:16px 18px;line-height:1.8;">${nl(c.story)}</div>`;
+  if (c.story.trim()) h += H2(hasEras ? '상세 (공통)' : '상세') + `<div style="${card}padding:16px 18px;line-height:1.8;text-align:justify;word-break:break-all;">${nl(c.story)}</div>`;
   { const g = deedGroups(c);
     if (g.main.length || g.aus.length) h += H2(hasEras ? '행적 (전체 흐름)' : '행적')
       + (g.main.length ? timeline(g.main, c.eras.some(e => !e.au)) : '')
@@ -1443,7 +1434,7 @@ function buildExportHtml(c, withImg){
       b += `<div style="text-align:center;font-size:24px;font-weight:800;line-height:1.3;margin-top:10px;">${esc(e.name.trim() || c.name)}</div>`;
       if (e.subtitle.trim()) b += `<div style="text-align:center;color:${tt};font-weight:700;">${esc(e.subtitle)}</div>`;
       if (changed.length) b += H3('바뀐 프로필') + table(changed).replace('margin-top:14px;', '');
-      if (e.story.trim()) b += H3('상세') + `<div style="line-height:1.8;">${nl(e.story)}</div>`;
+      if (e.story.trim()) b += H3('상세') + `<div style="line-height:1.8;text-align:justify;word-break:break-all;">${nl(e.story)}</div>`;
       if (er.length) b += H3('인간관계') + er.map(r => relRow(r, r.byEra[e.id], r.byEraImg[e.id])).join('');
       return b + `</div></div>`;
     }).join('');
