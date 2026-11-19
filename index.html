@@ -424,7 +424,7 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const clone = o => (typeof structuredClone === 'function' ? structuredClone(o) : JSON.parse(JSON.stringify(o)));
 const isHex = v => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);
 const safeImg = s => (typeof s === 'string' && (/^data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=\s]+$/i.test(s) || /^https?:\/\/[^\s'"()<>]+$/i.test(s))) ? s : '';
-const safeUrl = s => (typeof s === 'string' && /^https?:\/\/[^\s"'<>]+$/i.test(s.trim())) ? s.trim() : '';
+const safeUrl = s => { if (typeof s !== 'string') return ''; const u = s.trim().replace(/\s/g, '%20'); return /^https?:\/\/[^\s"'<>]+$/i.test(u) ? u : ''; };
 const bgImg = src => src ? `background-image:url('${src}')` : '';
 const fmtSize = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + 'KB' : (n / 1048576).toFixed(1) + 'MB';
 const fmtDate = t => { const d = new Date(t); return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`; };
@@ -510,7 +510,7 @@ function normalizeChar(c){
     color: isHex(c.color) ? c.color : '', tags: Array.isArray(c.tags) ? c.tags.map(str).filter(Boolean) : [],
     profile: Array.isArray(c.profile) ? prof(c.profile) : b.profile,
     quote: str(c.quote), story: str(c.story), deeds, eras, mainEra: ids.has(c.mainEra) ? c.mainEra : '',
-    relations: arr(c.relations, r => ({ id: str(r.id) || uid(), targetId: str(r.targetId), name: str(r.name), image: safeImg(r.image), relation: str(r.relation), byEra: byEra(r.byEra),
+    relations: arr(c.relations, r => ({ id: str(r.id) || uid(), targetId: str(r.targetId), name: str(r.name), link: str(r.link), image: safeImg(r.image), relation: str(r.relation), byEra: byEra(r.byEra),
       byEraImg: isObj(r.byEraImg) && !Array.isArray(r.byEraImg) ? Object.fromEntries(Object.entries(r.byEraImg).filter(([k, v]) => /^[\w-]{1,40}$/.test(k) && safeImg(v)).map(([k, v]) => [k, safeImg(v)])) : {} })),
     motifs: arr(c.motifs, m => ({ id: str(m.id) || uid(), work: str(m.work), name: str(m.name), image: safeImg(m.image), reason: str(m.reason) })),
     songs: arr(c.songs, s => ({ id: str(s.id) || uid(), title: str(s.title), artist: str(s.artist), url: str(s.url), note: str(s.note) })),
@@ -745,7 +745,9 @@ function relCards(items, link){
     const info = relInfo(r), { target, name } = info, image = img || info.image, pos = img ? 20 : info.pos;
     const inner = `<div class="avatar" style="${bgImg(image)};background-position:center ${pos}%">${image ? '' : esc((name || '?').slice(0, 1))}</div>
       <div class="txt"><b>${esc(name || '이름 없음')}</b><span>${esc(text)}</span></div>`;
-    return target && link ? `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>` : `<div class="rel">${inner}</div>`;
+    if (target && link) return `<a class="rel" href="#/c/${encodeURIComponent(target.id)}">${inner}<span class="go">›</span></a>`;
+    const ext = !target && link ? safeUrl(r.link) : '';
+    return ext ? `<a class="rel" href="${esc(ext)}" target="_blank" rel="noopener">${inner}<span class="go">↗</span></a>` : `<div class="rel">${inner}</div>`;
   }).join('')}</div>`;
 }
 // 공통 사항 부분들. live = 화면용(링크·유튜브 재생 포함), false = PNG용
@@ -831,7 +833,7 @@ const SECTIONS = {
   profile:   { label: '항목 추가',   blank: () => ({ k: '', v: '' }) },
   deeds:     { label: '행적 추가',   blank: () => ({ id: uid(), text: '', eraId: '' }) },
   eras:      { label: '시기 추가',   blank: () => ({ id: uid(), label: '', name: '', au: false, image: '', subtitle: '', story: '', profile: [] }) },
-  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', image: '', relation: '', byEra: {}, byEraImg: {} }) },
+  relations: { label: '관계 추가',   blank: () => ({ id: uid(), targetId: '', name: '', link: '', image: '', relation: '', byEra: {}, byEraImg: {} }) },
   motifs:    { label: '모티브 추가', blank: () => ({ id: uid(), work: '', name: '', image: '', reason: '' }) },
   songs:     { label: '테마곡 추가', blank: () => ({ id: uid(), title: '', artist: '', url: '', note: '' }) },
   wardrobe:  { label: '옷 추가',     blank: () => ({ id: uid(), image: '', caption: '' }) }
@@ -869,7 +871,7 @@ function itemFields(sec, it, i){
         ${others.length ? `<select class="input" data-bind="${p}targetId" data-rerender="relations">
           <option value="">직접 입력 (목록에 없는 캐릭터)</option>
           ${others.map(o => `<option value="${esc(o.id)}" ${o.id === it.targetId ? 'selected' : ''}>목록: ${esc(o.name || '이름 없음')}${o.origin ? ` (${esc(o.origin)})` : ''}</option>`).join('')}</select>` : ''}
-        ${target ? '' : inp('name', '상대 이름')}
+        ${target ? '' : inp('name', '상대 이름') + inp('link', '링크 (나무위키 등, 선택)', 'url')}
         ${inp('relation', eras.length ? '공통 관계 (모든 시기에 적용)' : '한 줄 관계 (예: 소꿉친구. 서로 못 잡아먹어 안달)')}
       </div>
         ${eras.length ? `<div class="era-rel" style="width:100%"><div class="sub-h">시기별 관계 <small>비우면 그 시기 인간관계에 뜨지 않아요</small></div>
@@ -1401,7 +1403,10 @@ function buildExportHtml(c, withImg){
   const avatar = (src, name) => src ? `<img src="${src}" alt="" style="width:50px;height:50px;border-radius:50%;object-fit:cover;object-position:center 20%;flex:none;">`
     : `<div style="width:50px;height:50px;border-radius:50%;background:${soft};color:${tt};font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;">${esc((name || '?').slice(0, 1))}</div>`;
   const relRow = (r, text, img) => { const { name } = relInfo(r), image = img || relInfo(r).image;
-    return `<div style="display:flex;align-items:center;gap:12px;${card}padding:10px 12px;margin-bottom:8px;">${avatar(I(image), name)}<div><b>${esc(name)}</b><div style="color:#6b6880;font-size:14px;line-height:1.5;">${esc(text)}</div></div></div>`; };
+    const ext = !r.targetId ? safeUrl(r.link) : '';
+    const body = `${avatar(I(image), name)}<div style="flex:1;"><b>${esc(name)}</b><div style="color:#6b6880;font-size:14px;line-height:1.5;">${esc(text)}</div></div>`;
+    return ext ? `<a href="${esc(ext)}" target="_blank" style="display:flex;align-items:center;gap:12px;${card}padding:10px 12px;margin-bottom:8px;text-decoration:none;color:#1d1b26;">${body}<span style="color:${tt};font-weight:700;">↗</span></a>`
+      : `<div style="display:flex;align-items:center;gap:12px;${card}padding:10px 12px;margin-bottom:8px;">${body}</div>`; };
   const hasEras = c.eras.length > 0;
   const prof = mergedProfile(c, null);
   const rels = relList(c, null);
