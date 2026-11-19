@@ -895,7 +895,7 @@ function eraEdit(e, i, len){
         <input class="input era-label" data-bind="${p}.label" data-relabel value="${esc(e.label)}" placeholder="시기 이름 (예: 학생 시절, 본편, 10년 후)">
         <input class="input" data-bind="${p}.name" value="${esc(e.name)}" placeholder="이 시기의 이름 (다를 때만, 비우면 기본 이름)">
         <input class="input" data-bind="${p}.subtitle" value="${esc(e.subtitle)}" placeholder="이 시기의 한 줄 소개 (비우면 공통)">
-        <label class="check sm"><input type="radio" name="mainEra" data-act="main-era" data-v="${esc(e.id)}" ${draft.mainEra === e.id ? 'checked' : ''}> 대표 시기 (목록 사진으로 사용)</label>
+        <label class="check sm"><input type="radio" name="mainEra" data-act="main-era" data-v="${esc(e.id)}" ${draft.mainEra === e.id ? 'checked' : ''}> 대표 시기</label>
         <label class="check sm"><input type="checkbox" data-act="era-au" data-i="${i}" ${e.au ? 'checked' : ''}> AU (원래 이야기와 별개인 세계)</label>
       </div></div>
     <div class="sub-h">바뀌는 프로필 <small>공통과 다른 항목만 적으세요</small></div>
@@ -1076,7 +1076,11 @@ app.addEventListener('click', async e => {
     case 'list-html': { const l = filteredChars(); if (!l.length) return toast('담을 캐릭터가 없어요'); openExport({ title: state.settings.title, build: w => buildListExportHtml(l, w), file: state.settings.title || '캐릭터 목록' }); break; }
     case 'kind': draft.kind = t.dataset.v; dirty = true; t.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === t)); $('#oc-only').style.display = draft.kind === 'canon' ? 'none' : ''; break;
     case 'era': ui.eraSel[ui.cid] = t.dataset.v; { const y = window.scrollY; renderDetail(ui.cid); window.scrollTo(0, y); } break;
-    case 'main-era': draft.mainEra = t.dataset.v; dirty = true; drawThumbPrev(); break;
+    case 'main-era':
+      // 이미 대표인 시기를 다시 누르면 대표 해제
+      if (draft.mainEra === t.dataset.v){ draft.mainEra = ''; t.checked = false; }
+      else draft.mainEra = t.dataset.v;
+      dirty = true; drawThumbPrev(); break;
     case 'era-au': draft.eras[i].au = t.checked; dirty = true; rerender('deeds'); break;
     case 'backup': exportJson(); renderList(); break;
     case 'import': importJson(); break;
